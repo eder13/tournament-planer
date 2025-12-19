@@ -1,0 +1,11 @@
+footer {
+    height: 25dvh;
+    color: black;
+    background: #f4f4f4;
+    display: grid;
+    place-items: center;
+}
+
+a {
+    color: black;
+}

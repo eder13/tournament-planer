@@ -1,0 +1,33 @@
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap/scss/variables';
+
+$theme-colors: map-merge(
+    $theme-colors,
+    (
+        'primary-dark': shade-color($blue, 20%),
+        'primary-light': tint-color($blue, 20%),
+        'purple': $indigo,
+        'purple-dark': shade-color($indigo, 20%),
+        'purple-light': tint-color($indigo, 10%),
+    )
+);
+
+$utilities-colors: map-merge($theme-colors, $utilities-colors);
+
+$utilities-text-colors: map-loop(
+    $utilities-colors,
+    rgba-css-var,
+    '$key',
+    'text'
+);
+$utilities-bg-colors: map-loop($utilities-colors, rgba-css-var, '$key', 'bg');
+$theme-colors-rgb: map-loop($theme-colors, to-rgb, '$value');
+
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/utilities';
+
+// and the rest of your Bootstrap components
+
+body {
+    background-color: #f4f4f4;
+}

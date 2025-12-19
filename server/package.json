@@ -1,0 +1,43 @@
+{
+    "name": "food-planer",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "build": "node esbuild.prod.js",
+        "build:serve-prod": "ENV=prod node ./build/main-bundle.js",
+        "build:dev": "node esbuild.dev.js",
+        "build:serve-dev": "ENV=dev nodemon ./build/main-bundle.js",
+        "serve-prod": "(npm run build &) && npm run build:serve-prod",
+        "serve-dev": "(npm run build:dev &) && npm run build:serve-dev"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "@hapi/cookie": "^12.0.1",
+        "@hapi/hapi": "^21.3.12",
+        "@hapi/inert": "^7.1.0",
+        "@prisma/client": "^6.8.2",
+        "bcryptjs": "^2.4.3",
+        "chalk": "^5.4.1",
+        "jose": "^6.0.11",
+        "nodemailer": "^7.0.3",
+        "uuid": "^13.0.0"
+    },
+    "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
+        "@types/bcryptjs": "^2.4.6",
+        "@types/hapi__cookie": "^12.0.5",
+        "@types/hapi__hapi": "^20.0.13",
+        "@types/node": "^22.10.7",
+        "@types/nodemailer": "^6.4.17",
+        "babel-loader": "^9.2.1",
+        "esbuild": "0.24.2",
+        "node-polyfill-webpack-plugin": "^4.1.0",
+        "nodemon": "^3.1.9",
+        "prisma": "^6.8.2",
+        "ts-loader": "^9.5.2",
+        "typescript": "^5.7.3"
+    }
+}
