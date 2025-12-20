@@ -58,13 +58,11 @@ const TournamentDetailsContent: FC<Props> = ({
                 .then((data: DataTournamentRoundAndMatchesResult) => {
                     setTournamentTree(data);
                 })
-                .catch(() => {
-                    // TODO: Error Message
+                .catch((e) => {
+                    console.error(e);
                 });
         }
     }, [started]);
-
-    console.log('#####** tournamentTree', tournamentTree);
 
     return (
         <div className="mb-5">

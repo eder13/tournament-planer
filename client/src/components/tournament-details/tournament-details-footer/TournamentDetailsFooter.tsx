@@ -32,7 +32,6 @@ const TournamentDetailsFooter: FC<Props> = ({ started, joinLink }) => {
                     <AccordionDetails>
                         <div className="mb-5">
                             <h2>QR Code</h2>
-                            TODO QR CODE
                         </div>
 
                         <div className="mb-5 pb-5">

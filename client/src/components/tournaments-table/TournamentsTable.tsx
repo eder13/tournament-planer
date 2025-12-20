@@ -14,6 +14,7 @@ import './TournamentsTable.css';
 import CustomToolbar from './tournament-table-custom-toolbar/TournamentTableCustomToolbar';
 import { HttpCode, HTTPMethod } from '../../../../server/src/constants/common';
 import UtilsHelper from '../../utils/UtilsHelper';
+import Logger from '../../../../server/src/helpers/logger/index';
 
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 500 },
@@ -51,8 +52,6 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
         selectedIds: GridRowSelectionModel | undefined
     ) => {
         if (selectedIds) {
-            console.log('#####** type', selectedIds.type);
-
             if (selectedIds.type === 'exclude') {
                 if (selectedIds.ids.size === 0) {
                     // delete all of them
@@ -62,12 +61,12 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                         });
 
                         if (res.status === HttpCode.NO_CONTENT) {
-                            console.log(`Deleted ${data.id} successfully.`);
+                            Logger.info(`Deleted ${data.id} successfully.`);
                         }
                     });
 
-                    await Promise.allSettled(promises).then((a) => {
-                        console.log('Table has been updated', a);
+                    await Promise.allSettled(promises).then(() => {
+                        Logger.info('Table has been updated');
                     });
 
                     // reset row data to empty array since we deleted everything
@@ -85,14 +84,13 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                         });
 
                         if (res.status === HttpCode.NO_CONTENT) {
-                            console.log(`Deleted ${data.id} successfully.`);
+                            Logger.info(`Deleted ${data.id} successfully.`);
                         }
                     });
 
-                    await Promise.allSettled(promises).then((a) => {
-                        console.log(
-                            'Table has been updated - Deleted the ones that have NOT been excluded.',
-                            a
+                    await Promise.allSettled(promises).then(() => {
+                        Logger.info(
+                            'Table has been updated - Deleted the ones that have NOT been excluded.'
                         );
                     });
 
@@ -116,14 +114,13 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                     });
 
                     if (res.status === HttpCode.NO_CONTENT) {
-                        console.log(`Deleted ${data.id} successfully.`);
+                        Logger.info(`Deleted ${data.id} successfully.`);
                     }
                 });
 
-                await Promise.allSettled(promises).then((a) => {
-                    console.log(
-                        'Table has been updated - Deleted the ones that HAVE BEEN included.',
-                        a
+                await Promise.allSettled(promises).then(() => {
+                    Logger.info(
+                        'Table has been updated - Deleted the ones that HAVE BEEN included.'
                     );
                 });
 

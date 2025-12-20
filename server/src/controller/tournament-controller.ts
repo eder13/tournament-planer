@@ -130,7 +130,34 @@ export class TournamentController implements BaseController {
         const { name = '' } = request.payload;
         const { id = '' } = request.params;
 
-        if (!name || !id) {
+        const tournament = await Database.getInstance().tournament.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (tournament?.started) {
+            return h.response(/*html*/ `
+                <html>
+                    <head>
+                        <meta
+                            name="viewport"
+                            content="width=device-width, initial-scale=1.0"
+                        />
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+                    </head>
+                    <body>
+                        <div class="container mt-5">
+                            <div class="alert alert-danger" role="alert">
+                                The tournament did already start, you can no longer join or participate.
+                            </div>
+                            <button onclick="window.history.back();" class="btn btn-primary">Back</button>
+                        </div>
+                    </body>
+                </html>`);
+        }
+
+        if (!name || !id || tournament?.started) {
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -265,12 +292,6 @@ export class TournamentController implements BaseController {
             const round = 1;
 
             try {
-                console.log(
-                    '####** advancing to next round with players and number',
-                    JSON.stringify(players),
-                    round
-                );
-
                 await TournamentService.advanceRound({
                     tournamentId: id,
                     players,

@@ -14,8 +14,6 @@ const MatchResultEnter = () => {
     }>();
     const navigate = useNavigate();
 
-    console.log('#####** the params', params);
-
     const [resultPlayer1, setResultPlayer1] = useState('0');
     const [resultPlayer2, setResultPlayer2] = useState('0');
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);

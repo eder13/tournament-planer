@@ -1,22 +1,33 @@
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 import Page from '../structure/page/Page';
 import { Button } from '@mui/material';
 import CommonConstants from '../constants/CommonConstants';
+import { useContext } from 'react';
+import { GlobalContext } from '../context/global-context/GlobalProvider';
+import TextImageComponent from '../components/text-image-component/TextImageComponent';
+import OverviewDashboardImage from './../assets/overview_dashboard.png';
+import TournamentGeneratorGifImage from './../assets/tournament_generator.gif';
 
 const Home = () => {
+    const { user } = useContext(GlobalContext);
+
+    if (user.isLoggedIn) {
+        return <Navigate to={CommonConstants.Routes.UserProfile} />;
+    }
+
     return (
         <Page>
             <h1
                 style={{ wordBreak: 'break-word' }}
                 className="mb-5"
             >
-                Knockout Tournament Planer
+                Knockout Tournament Planner
             </h1>
             <p>
-                A basic knockout tournament generator. Create your own
-                tournaments and let teams join your competition.
+                Create, manage, and run single-elimination tournaments with
+                ease.
             </p>
-            <div className="mb-5">
+            <div className="mb-lg-0 mb-5">
                 <Link
                     to={CommonConstants.Routes.Login}
                     className="pe-3"
@@ -29,30 +40,31 @@ const Home = () => {
             </div>
 
             <div className="w-100 mb-5">
-                <h2
-                    style={{ wordBreak: 'break-word' }}
-                    className="mb-5"
-                >
-                    Create and manage Tournaments
-                </h2>
-                <p>
-                    Manage Tournaments by inviting players, shuffling them in
-                    groups and let them fight against each other. A pointing
-                    system takes track of the current leader in a group.
-                </p>
+                <TextImageComponent
+                    headlineText="Create and Manage Tournaments"
+                    text="Easily manage your tournaments: add players, start rounds, and let the system advance winners automatically until a champion is crowned."
+                    switchOrder={false}
+                    image={{
+                        url: OverviewDashboardImage,
+                        width: 2578,
+                        height: 1226,
+                        alt: 'overview-dashboard-image',
+                    }}
+                />
             </div>
 
             <div className="w-100">
-                <h2
-                    style={{ wordBreak: 'break-word' }}
-                    className="mb-5"
-                >
-                    Automatic Tournament Generation
-                </h2>
-                <p>
-                    Let the application generate your knockout plan. Everything
-                    is shuffled and randomly assigned.
-                </p>
+                <TextImageComponent
+                    headlineText="Automatic Tournament Generation"
+                    text="Live tournament bracket with match results and advancing teams."
+                    switchOrder={true}
+                    image={{
+                        url: TournamentGeneratorGifImage,
+                        width: 2600,
+                        height: 1350,
+                        alt: 'overview-dashboard-image',
+                    }}
+                />
             </div>
         </Page>
     );

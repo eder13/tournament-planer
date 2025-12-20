@@ -25,6 +25,7 @@
 li.game {
     padding-left: 20px;
     height: 26px;
+    min-height: 40px;
 }
 
 li.game.winner {

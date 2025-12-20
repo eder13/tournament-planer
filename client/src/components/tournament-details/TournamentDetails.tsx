@@ -89,9 +89,6 @@ const TournamentDetails: FC<Props> = ({ id }) => {
                     body: JSON.stringify({ started: true }),
                 });
                 if (res.ok) {
-                    const data = await res.json();
-                    console.log('#####** altered data', data);
-
                     // start the tournament finally
                     fetch(`/tournament/start/${id}`, {
                         method: 'POST',
@@ -103,19 +100,16 @@ const TournamentDetails: FC<Props> = ({ id }) => {
                                     started: '1',
                                 };
                                 setTournament(transformedTournament);
-                                console.log(
-                                    '#####** tournament has been started and can now be fetched the rounds etc.'
-                                );
                             }
                         })
-                        .catch(() => {
-                            // TODO Catch Error
+                        .catch((e) => {
+                            console.error(e);
                         });
                 } else {
                     throw new Error('Failed to Start Tournament');
                 }
             } catch (e) {
-                // TODO: Error when fetching and setting
+                console.error(e);
             }
         }
     }

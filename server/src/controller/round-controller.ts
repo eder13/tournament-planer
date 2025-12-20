@@ -21,7 +21,7 @@ export class RoundController implements BaseController {
     ) {
         const { tournamentId = '' } = req.params;
 
-        const tournamentWithRounds =
+        let tournamentWithRounds =
             await Database.getInstance().tournament.findUnique({
                 where: { id: tournamentId },
                 include: {
@@ -79,6 +79,30 @@ export class RoundController implements BaseController {
                     nextRoundNumber: nextRound,
                     players: winners,
                 });
+
+                tournamentWithRounds =
+                    await Database.getInstance().tournament.findUnique({
+                        where: { id: tournamentId },
+                        include: {
+                            rounds: {
+                                orderBy: {
+                                    round_number: 'asc',
+                                },
+                                include: {
+                                    matches: {
+                                        include: {
+                                            player1: true,
+                                            player2: true,
+                                            winner: true,
+                                        },
+                                        orderBy: {
+                                            id: 'asc',
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    });
             }
         }
 
@@ -101,7 +125,6 @@ export class RoundController implements BaseController {
             const { tournamentId = '' } = req.params;
             const { players = [], nextRoundNumber = 0 } = req.payload;
 
-            console.log('#####** the payload', players, nextRoundNumber);
             await TournamentService.advanceRound({
                 tournamentId,
                 players,

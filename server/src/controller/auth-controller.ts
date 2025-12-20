@@ -85,17 +85,7 @@ export class AuthController implements BaseController {
                 .code(HttpCode.UNAUTHORIZED);
         }
 
-        // 1 hour timeframe
         const emailTokenReset = await JWTHelper.generateJWTEmailReset(email);
-
-        console.log(
-            '#####** process.env.PROTOCOL, process.env.HOST, process.env.PROTOCOL, process.env.PROTOCOL',
-            process.env.PROTOCOL,
-            process.env.HOST,
-            process.env.PROTOCOL,
-            process.env.PROTOCOL
-        );
-
         const url = new URL(`${ServerURLUtils.getHostName()}/change-password`);
         url.searchParams.set('token', emailTokenReset);
 
@@ -261,7 +251,6 @@ export class AuthController implements BaseController {
     ) {
         const { email, password, confirmPassword } = request.payload;
 
-        // TODO: Server Side Password and E-Mail Validation
         if (!email || !password || !confirmPassword) {
             return h
                 .response({
@@ -277,7 +266,6 @@ export class AuthController implements BaseController {
             },
         });
 
-        // TODO: User Already Exists
         if (user !== null) {
             return h
                 .response({
