@@ -12,6 +12,7 @@ import UserProfile from './pages/UserProfile';
 import TournamentDetailPage from './pages/TournamentDetailPage';
 import JointTournament from './pages/JointTournament';
 import RulesPage from './pages/Rules';
+import MatchResultEnter from './pages/MatchResultEnter';
 
 const App = () => {
     const dispatch = useContext(GlobalContextDispatch);
@@ -69,6 +70,10 @@ const App = () => {
                 <Route
                     path={CommonConstants.Routes.JoinTournament}
                     element={<JointTournament />}
+                />
+                <Route
+                    path={CommonConstants.Routes.EnterMatchResult}
+                    element={<MatchResultEnter />}
                 />
             </Routes>
             <Footer />

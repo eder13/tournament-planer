@@ -30,7 +30,18 @@ model Tournament {
 
   creator User @relation(fields: [created_by], references: [id])
   players Player_Tournament[]
-  
+  rounds Round[]
+}
+
+model Round {
+  id            Int    @id @default(autoincrement())
+  tournament_id String
+  round_number  Int
+
+  tournament Tournament @relation(fields: [tournament_id], references: [id], onDelete: Cascade)
+  matches    Match[]
+
+  @@unique([tournament_id, round_number])
 }
 
 model Player {
@@ -38,12 +49,32 @@ model Player {
   name              String               
 
   tournaments       Player_Tournament[]
+  matchesAsP1 Match[] @relation("Player1")
+  matchesAsP2 Match[] @relation("Player2")
+  wins        Match[] @relation("Winner")
+}
+
+model Match {
+  id                Int @id @default(autoincrement())
+  round_id          Int
+  player1_id        Int
+  player2_id        Int?
+  winner_id         Int?
+  result            Json?
+
+  round   Round     @relation(fields: [round_id], references: [id], onDelete: Cascade)
+  player1 Player @relation("Player1", fields: [player1_id], references: [id])
+  player2 Player? @relation("Player2", fields: [player2_id], references: [id])
+  winner  Player? @relation("Winner", fields: [winner_id], references: [id])
+
+  @@index([round_id])
 }
 
 model Player_Tournament {
   id            Int        @id @default(autoincrement())
   player_id     Int
   tournament_id String
+  bye_count     Int        @default(0)
 
   player     Player @relation(fields: [player_id], references: [id], onDelete: Cascade)
   tournament Tournament @relation(fields: [tournament_id], references: [id], onDelete: Cascade)

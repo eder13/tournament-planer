@@ -1,12 +1,19 @@
 import { Request, ResponseToolkit } from '@hapi/hapi';
 import { Controller } from '../decorators/Controller';
 import { BaseController } from '../types/core';
-import { HttpCode, SeparatorPlayerUUIDDatabaes } from '../constants/common';
+import {
+    HttpCode,
+    HTTPMethod,
+    SeparatorPlayerUUIDDatabaes,
+} from '../constants/common';
 import Database from '../db/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import Logger from '../helpers/logger';
 import type { DataTournamentResultDetails } from '../../../client/src/types/common';
 import { Prisma } from '@prisma/client';
+import TournamentHelper from '../helpers/tournament';
+import { ServerURLUtils } from '../helpers/url';
+import { TournamentService } from '../services/tournament-service/tournament-service';
 
 @Controller()
 export class TournamentController implements BaseController {
@@ -223,6 +230,58 @@ export class TournamentController implements BaseController {
         } catch (e) {
             Logger.error(e);
 
+            return h.response().code(HttpCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public async startTournamentById(
+        req: Request<{
+            Params: {
+                id: string;
+            };
+        }>,
+        h: ResponseToolkit
+    ) {
+        const { id = '' } = req.params;
+
+        const tournament = await Database.getInstance().tournament.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (tournament?.started) {
+            // get Players and shuffle them
+            const players = await Database.getInstance().player.findMany({
+                where: {
+                    tournaments: {
+                        some: {
+                            tournament_id: id,
+                        },
+                    },
+                },
+            });
+
+            const round = 1;
+
+            try {
+                console.log(
+                    '####** advancing to next round with players and number',
+                    JSON.stringify(players),
+                    round
+                );
+
+                await TournamentService.advanceRound({
+                    tournamentId: id,
+                    players,
+                    nextRoundNumber: round,
+                });
+            } catch (e) {
+                Logger.error(e);
+            }
+
+            return h.response().code(HttpCode.OK);
+        } else {
             return h.response().code(HttpCode.INTERNAL_SERVER_ERROR);
         }
     }

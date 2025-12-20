@@ -67,4 +67,15 @@ export const tournamentRoutes: ServerRoute[] = [
         },
         handler: 'TournamentController.patchTournamentById',
     },
+    {
+        method: 'POST',
+        path: '/tournament/start/{id}',
+        options: {
+            auth: {
+                mode: 'required',
+            },
+            plugins: { cookie: { redirectTo: false } },
+        },
+        handler: 'TournamentController.startTournamentById',
+    },
 ];

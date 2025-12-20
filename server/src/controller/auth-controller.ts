@@ -8,6 +8,7 @@ import MailService from '../services/mail-services/mail-service';
 import Logger from '../helpers/logger';
 import { Controller } from '../decorators/Controller';
 import { v4 as uuidv4 } from 'uuid';
+import { ServerURLUtils } from '../helpers/url';
 
 const HASH_SALT_ROUNDS = 10;
 
@@ -95,11 +96,7 @@ export class AuthController implements BaseController {
             process.env.PROTOCOL
         );
 
-        const url = new URL(
-            `${process.env.PROTOCOL}://${process.env.HOST}${
-                process.env.PORT ? ':' + process.env.PORT : ''
-            }/change-password`
-        );
+        const url = new URL(`${ServerURLUtils.getHostName()}/change-password`);
         url.searchParams.set('token', emailTokenReset);
 
         try {

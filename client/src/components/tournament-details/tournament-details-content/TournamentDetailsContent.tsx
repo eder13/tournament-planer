@@ -14,8 +14,12 @@ import {
     HTTPMethod,
     HttpCode,
 } from '../../../../../server/src/constants/common';
-import type { Dispatch, FC } from 'react';
-import type { Player } from '../../../types/common';
+import { useEffect, useState, type Dispatch, type FC } from 'react';
+import type {
+    DataTournamentRoundAndMatchesResult,
+    Player,
+} from '../../../types/common';
+import KnockoutTournamentPlan from '../../knockout-tournament-plan/KnockoutTournamentPlan';
 
 type Props = {
     started: boolean;
@@ -25,6 +29,7 @@ type Props = {
     onClickStartTournament: (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => void;
+    tournamentId: string;
 };
 
 const TournamentDetailsContent: FC<Props> = ({
@@ -33,12 +38,40 @@ const TournamentDetailsContent: FC<Props> = ({
     players,
     setPlayers,
     onClickStartTournament,
+    tournamentId,
 }) => {
+    const [tournamentTree, setTournamentTree] =
+        useState<DataTournamentRoundAndMatchesResult>();
+
+    useEffect(() => {
+        if (started) {
+            fetch(`/rounds/matches/${tournamentId}`)
+                .then((res) => {
+                    if (res.ok) {
+                        return res.json();
+                    } else {
+                        throw new Error(
+                            'Error while fetching tournament rounds'
+                        );
+                    }
+                })
+                .then((data: DataTournamentRoundAndMatchesResult) => {
+                    setTournamentTree(data);
+                })
+                .catch(() => {
+                    // TODO: Error Message
+                });
+        }
+    }, [started]);
+
+    console.log('#####** tournamentTree', tournamentTree);
+
     return (
         <div className="mb-5">
             {started && (
                 <div className="mb-5">
-                    <h2>Knockout Tournament Plan</h2>
+                    <h2 className="mb-5">Knockout Tournament Plan</h2>
+                    <KnockoutTournamentPlan data={tournamentTree} />
                 </div>
             )}
             <div className="d-flex justify-content-between">
@@ -70,6 +103,7 @@ const TournamentDetailsContent: FC<Props> = ({
                                     </Typography>
                                     <Typography variant="h5">
                                         {
+                                            /* @ts-ignore */
                                             player.player.name.split(
                                                 SeparatorPlayerUUIDDatabaes
                                             )[0]

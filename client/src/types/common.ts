@@ -7,10 +7,10 @@ export type DataTournamentsResult = {
 };
 
 export interface DataTournamentResultDetails extends DataTournamentsResult {
-    players: Array<Player>;
+    players: Array<Players>;
 }
 
-export type Player = {
+export type Players = {
     id: number;
     player_id: number;
     tournament_id: string;
@@ -19,3 +19,41 @@ export type Player = {
         name: string;
     };
 };
+
+export type Player = {
+    id: number;
+    name: string;
+};
+
+export interface DataTournamentRoundAndMatchesResult {
+    tournamentWithRounds: {
+        id: string;
+        name: string;
+        created_on: Date | string;
+        created_by: number;
+        started: boolean;
+        rounds: Array<Round>;
+    };
+}
+
+interface Round {
+    id: number;
+    tournament_id: string;
+    round_number: number;
+    matches: Array<Match>;
+}
+
+interface Match {
+    id: number;
+    round_id: number;
+    player1_id: number;
+    player2_id: number;
+    winner_id: null | number;
+    result: null | {
+        player1: number;
+        player2: number;
+    };
+    player1: Player;
+    player2: Player | null;
+    winner: null | Player;
+}

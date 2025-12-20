@@ -8,5 +8,7 @@ export default {
         Rules: '/rules',
         TournamentDetails: '/userprofile/tournaments/:tournamentId',
         JoinTournament: '/join/tournaments/:tournamentId',
+        EnterMatchResult:
+            '/match/:tournamentId/:roundId/:matchId/:player1/:player2',
     },
 };

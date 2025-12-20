@@ -76,33 +76,47 @@ const TournamentDetails: FC<Props> = ({ id }) => {
         return () => clearInterval(interval);
     }, [timer, setTimer, setPlayers, setTournament, tournament?.started]);
 
-    function onClickStartTournament(
+    async function onClickStartTournament(
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) {
         if (!e.currentTarget.disabled && tournament) {
-            const transformedTournament = { ...tournament, started: '1' };
-
-            fetch(`/tournament/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ started: true }),
-            })
-                .then((res) => {
-                    if (res.ok) {
-                        return res.json();
-                    } else {
-                        throw new Error('Failed to Start Tournament');
-                    }
-                })
-                .then((data) => {
-                    console.log('#####** altered data', data);
-                    setTournament(transformedTournament);
-                })
-                .catch(() => {
-                    // TODO: Failed to Start Tournament Error Message
+            try {
+                const res = await fetch(`/tournament/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ started: true }),
                 });
+                if (res.ok) {
+                    const data = await res.json();
+                    console.log('#####** altered data', data);
+
+                    // start the tournament finally
+                    fetch(`/tournament/start/${id}`, {
+                        method: 'POST',
+                    })
+                        .then((res) => {
+                            if (res.ok) {
+                                const transformedTournament = {
+                                    ...tournament,
+                                    started: '1',
+                                };
+                                setTournament(transformedTournament);
+                                console.log(
+                                    '#####** tournament has been started and can now be fetched the rounds etc.'
+                                );
+                            }
+                        })
+                        .catch(() => {
+                            // TODO Catch Error
+                        });
+                } else {
+                    throw new Error('Failed to Start Tournament');
+                }
+            } catch (e) {
+                // TODO: Error when fetching and setting
+            }
         }
     }
 
@@ -123,6 +137,7 @@ const TournamentDetails: FC<Props> = ({ id }) => {
                 players={players}
                 setPlayers={setPlayers}
                 onClickStartTournament={onClickStartTournament}
+                tournamentId={tournament?.id ?? ''}
             />
 
             <TournamentDetailsFooter

@@ -9,7 +9,12 @@ class UtilsHelper {
         if (!date) {
             return '';
         }
-        return format(date, 'dd.MM.yyyy HH:mm');
+        try {
+            return format(date, 'dd.MM.yyyy HH:mm');
+        } catch (e) {
+            console.error('// TODO: This is a bug. fix it.', e);
+            return '';
+        }
     };
 
     static readonly getRootDomainHref = () => {

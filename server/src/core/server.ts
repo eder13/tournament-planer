@@ -12,6 +12,10 @@ import { authRoutes } from '../routes/auth-routes';
 import { AuthController } from '../controller/auth-controller';
 import { PlayerController } from '../controller/player-controller';
 import { playerRoutes } from '../routes/player-routes';
+import { roundRoutes } from '../routes/round-routes';
+import { RoundController } from '../controller/round-controller';
+import { MatchController } from '../controller/match-controller';
+import { matchRoutes } from '../routes/match-routes';
 
 const port = process.env.PORT ?? 3100;
 
@@ -33,11 +37,15 @@ const server = new Hapi.Server({
         ...authRoutes,
         ...tournamentRoutes,
         ...playerRoutes,
+        ...roundRoutes,
+        ...matchRoutes,
     ]);
     ServerHelper.registerControllers([
         new AuthController(),
         new TournamentController(),
         new PlayerController(),
+        new RoundController(),
+        new MatchController(),
     ]);
     ServerHelper.registerHandlers(server);
 
