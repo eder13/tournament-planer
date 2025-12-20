@@ -19,7 +19,7 @@ class MailService {
 
     sentMail = async (email: string, subject: string, textHTML: string) => {
         const info = await this?.transporter?.sendMail({
-            from: '"Food Planner" <simon.ranflt@student.tugraz.at>',
+            from: '"Knockout Tournament Planner" <simon.ranflt@student.tugraz.at>',
             to: email,
             subject,
             html: textHTML,

@@ -22,6 +22,10 @@ const style = {
 
 const ModalAddTournament = () => {
     const [open, setOpen] = useState(false);
+    const [text, setText] = useState('');
+
+    const isErrorText = text.length < 2;
+    const isFormValid = text.length >= 2;
 
     return (
         <>
@@ -49,8 +53,15 @@ const ModalAddTournament = () => {
                         Create a new Tournament
                     </Typography>
                     <form
-                        action="/tournament"
-                        method="post"
+                        {...(isFormValid
+                            ? {
+                                  action: '/tournament',
+                                  method: 'post',
+                              }
+                            : {})}
+                        style={{
+                            minWidth: '300px',
+                        }}
                     >
                         <Stack
                             sx={{ maxWidth: '500px' }}
@@ -61,11 +72,20 @@ const ModalAddTournament = () => {
                                 id="name"
                                 name="name"
                                 label="Name of Tournament"
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                                error={isErrorText}
+                                helperText={
+                                    isErrorText
+                                        ? 'Specify a name with at least 2 characters'
+                                        : ''
+                                }
                             ></TextField>
                             <Button
                                 className="mb-3"
                                 variant="contained"
                                 type="submit"
+                                disabled={!isFormValid}
                             >
                                 Create
                             </Button>

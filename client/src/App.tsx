@@ -13,6 +13,7 @@ import TournamentDetailPage from './pages/TournamentDetailPage';
 import JointTournament from './pages/JointTournament';
 import RulesPage from './pages/Rules';
 import MatchResultEnter from './pages/MatchResultEnter';
+import Error404 from './pages/Error404';
 
 const App = () => {
     const dispatch = useContext(GlobalContextDispatch);
@@ -74,6 +75,10 @@ const App = () => {
                 <Route
                     path={CommonConstants.Routes.EnterMatchResult}
                     element={<MatchResultEnter />}
+                />
+                <Route
+                    path="*"
+                    element={<Error404 />}
                 />
             </Routes>
             <Footer />

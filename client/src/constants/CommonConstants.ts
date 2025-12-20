@@ -11,4 +11,6 @@ export default {
         EnterMatchResult:
             '/match/:tournamentId/:roundId/:matchId/:player1/:player2',
     },
+
+    RegExEmail: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 };

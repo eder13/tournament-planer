@@ -2,6 +2,7 @@ import { Stack, TextField, Button, Alert } from '@mui/material';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CommonConstants from '../../constants/CommonConstants';
 
 const ForgotPasswordForm = () => {
     const [forgotEmail, setForgotEmail] = useState('');
@@ -12,6 +13,12 @@ const ForgotPasswordForm = () => {
     const isPasswordResetDoneSuccessfully = searchParams.get(
         'password_successfully_reset'
     );
+
+    const emailError =
+        forgotEmail.length > 0 && !CommonConstants.RegExEmail.test(forgotEmail);
+
+    const isFormValid =
+        forgotEmail.length > 0 && CommonConstants.RegExEmail.test(forgotEmail);
 
     return (
         <>
@@ -51,8 +58,15 @@ const ForgotPasswordForm = () => {
             )}
 
             <form
-                action="/forgot"
-                method="post"
+                {...(isFormValid
+                    ? {
+                          action: '/forgot',
+                          method: 'post',
+                      }
+                    : {})}
+                style={{
+                    minWidth: '300px',
+                }}
             >
                 <Stack
                     sx={{ maxWidth: '500px' }}
@@ -65,11 +79,18 @@ const ForgotPasswordForm = () => {
                         label="E-Mail"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
+                        error={emailError}
+                        helperText={
+                            emailError
+                                ? 'Please enter a valid email address'
+                                : ' '
+                        }
                     ></TextField>
                     <Button
                         className="mb-3"
                         variant="contained"
                         type="submit"
+                        disabled={!isFormValid}
                     >
                         Reset Password
                     </Button>

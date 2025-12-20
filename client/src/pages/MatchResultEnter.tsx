@@ -18,9 +18,22 @@ const MatchResultEnter = () => {
     const [resultPlayer2, setResultPlayer2] = useState('0');
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const isFormValid =
+        resultPlayer1.length > 0 &&
+        resultPlayer2.length > 0 &&
+        Number(resultPlayer1) >= 0 &&
+        Number(resultPlayer2);
+    const isPlayer1TextFieldError =
+        resultPlayer1.length === 0 || Number(resultPlayer1) < 0;
+    const isPlayer2TextFieldError =
+        resultPlayer2.length === 0 || Number(resultPlayer2) < 0;
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!isFormValid) {
+            return;
+        }
 
         fetch(
             `/match/${params.tournamentId}/${params.roundId}/${params.matchId}`,
@@ -97,12 +110,14 @@ const MatchResultEnter = () => {
                             type="number"
                             value={resultPlayer1}
                             onChange={(e) => setResultPlayer1(e.target.value)}
+                            error={isPlayer1TextFieldError}
                         ></TextField>
                         <TextField
                             placeholder="0"
                             type="number"
                             value={resultPlayer2}
                             onChange={(e) => setResultPlayer2(e.target.value)}
+                            error={isPlayer2TextFieldError}
                         ></TextField>
                     </div>
                     <Button
