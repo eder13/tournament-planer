@@ -7,6 +7,7 @@ import { GlobalContext } from '../context/global-context/GlobalProvider';
 import TextImageComponent from '../components/text-image-component/TextImageComponent';
 import OverviewDashboardImage from './../assets/overview_dashboard.png';
 import TournamentGeneratorGifImage from './../assets/tournament_generator.gif';
+import QRCodeDashboardJoinImage from './../assets/qr.png';
 
 const Home = () => {
     const { user } = useContext(GlobalContext);
@@ -53,11 +54,25 @@ const Home = () => {
                 />
             </div>
 
-            <div className="w-100">
+            <div className="w-100 mb-5">
+                <TextImageComponent
+                    headlineText="Player Joining System"
+                    text="Automatic QR Code creation. Players can simply join the tournament by scanning the code and entering their names."
+                    switchOrder={true}
+                    image={{
+                        url: QRCodeDashboardJoinImage,
+                        width: 1591,
+                        height: 1392,
+                        alt: 'overview-dashboard-qr-code-image',
+                    }}
+                />
+            </div>
+
+            <div className="w-100 mb-5">
                 <TextImageComponent
                     headlineText="Automatic Tournament Generation"
                     text="Live tournament bracket with match results and advancing teams."
-                    switchOrder={true}
+                    switchOrder={false}
                     image={{
                         url: TournamentGeneratorGifImage,
                         width: 2600,

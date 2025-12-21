@@ -114,8 +114,8 @@ const TournamentDetails: FC<Props> = ({ id }) => {
         }
     }
 
-    // TODO: Create QR Code out of this
     const joinLink = `${UtilsHelper.getRootDomainHref()}/join/tournaments/${id}`;
+    const QRCodeApiLink = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${joinLink}`;
 
     return (
         <div>
@@ -137,6 +137,7 @@ const TournamentDetails: FC<Props> = ({ id }) => {
             <TournamentDetailsFooter
                 started={!!tournament?.started}
                 joinLink={joinLink}
+                QRCodeImageSrc={QRCodeApiLink}
             />
         </div>
     );

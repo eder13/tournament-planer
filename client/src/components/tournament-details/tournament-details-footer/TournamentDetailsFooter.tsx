@@ -10,9 +10,14 @@ import type { FC } from 'react';
 type Props = {
     started: boolean;
     joinLink: string;
+    QRCodeImageSrc: string;
 };
 
-const TournamentDetailsFooter: FC<Props> = ({ started, joinLink }) => {
+const TournamentDetailsFooter: FC<Props> = ({
+    started,
+    joinLink,
+    QRCodeImageSrc,
+}) => {
     return (
         <>
             {!started && (
@@ -32,6 +37,12 @@ const TournamentDetailsFooter: FC<Props> = ({ started, joinLink }) => {
                     <AccordionDetails>
                         <div className="mb-5">
                             <h2>QR Code</h2>
+                            <img
+                                src={QRCodeImageSrc}
+                                width={200}
+                                height={200}
+                                alt="QR Code"
+                            />
                         </div>
 
                         <div className="mb-5 pb-5">

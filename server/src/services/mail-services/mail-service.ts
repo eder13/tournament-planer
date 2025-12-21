@@ -5,21 +5,33 @@ class MailService {
     private readonly transporter: Transporter | null = null;
 
     constructor() {
+        console.log(
+            '####** Data',
+            JSON.stringify({
+                host: process.env.EMAIL_HOST,
+                port: Number(process.env.EMAIL_PORT),
+                secure: process.env.EMAIL_PORT === '465', // true for 465, false for other ports
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASSWORD,
+                },
+            })
+        );
+
         this.transporter = nodemailer.createTransport({
-            host: 'mailrelay.tugraz.at',
-            port: 465,
-            secure: true, // true for 465, false for other ports
-            // TODO: Hardcoded for now, exchange with ENV variables
+            host: process.env.EMAIL_HOST,
+            port: Number(process.env.EMAIL_PORT),
+            secure: process.env.EMAIL_PORT === '465', // true for 465, false for other ports
             auth: {
-                user: 'eder13',
-                pass: 'gaFo$R1+RR',
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
             },
         });
     }
 
     sentMail = async (email: string, subject: string, textHTML: string) => {
         const info = await this?.transporter?.sendMail({
-            from: '"Knockout Tournament Planner" <simon.ranflt@student.tugraz.at>',
+            from: '"Knockout Tournament Planner" <no-reply@tournament-planer.com>',
             to: email,
             subject,
             html: textHTML,
