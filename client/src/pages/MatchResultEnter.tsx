@@ -22,7 +22,7 @@ const MatchResultEnter = () => {
         resultPlayer1.length > 0 &&
         resultPlayer2.length > 0 &&
         Number(resultPlayer1) >= 0 &&
-        Number(resultPlayer2);
+        Number(resultPlayer2) >= 0;
     const isPlayer1TextFieldError =
         resultPlayer1.length === 0 || Number(resultPlayer1) < 0;
     const isPlayer2TextFieldError =
