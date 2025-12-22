@@ -7,6 +7,7 @@ import {
 } from 'react';
 
 interface State {
+    isMounted: boolean;
     user: {
         id: number;
         email: string;
@@ -24,9 +25,13 @@ type Action =
       }
     | {
           type: 'loggedOut';
+      }
+    | {
+          type: 'mounted';
       };
 
 const initialContextState: State = {
+    isMounted: false,
     user: {
         id: -1,
         email: '',
@@ -59,7 +64,12 @@ function globalReducer(state: State, action: Action) {
                 },
             };
         }
-
+        case 'mounted': {
+            return {
+                ...state,
+                isMounted: true,
+            };
+        }
         default:
             return state;
     }

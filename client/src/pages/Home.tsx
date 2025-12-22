@@ -42,13 +42,13 @@ const Home = () => {
 
             <div className="w-100 mb-5">
                 <TextImageComponent
-                    headlineText="Create and Manage Tournaments"
-                    text="Easily manage your tournaments: add players, start rounds, and let the system advance winners automatically until a champion is crowned."
+                    headlineText="Automatic Tournament Generation"
+                    text="Live tournament bracket with match results and advancing teams."
                     switchOrder={false}
                     image={{
-                        url: OverviewDashboardImage,
-                        width: 2578,
-                        height: 1226,
+                        url: TournamentGeneratorGifImage,
+                        width: 2600,
+                        height: 1350,
                         alt: 'overview-dashboard-image',
                     }}
                 />
@@ -70,13 +70,13 @@ const Home = () => {
 
             <div className="w-100 mb-5">
                 <TextImageComponent
-                    headlineText="Automatic Tournament Generation"
-                    text="Live tournament bracket with match results and advancing teams."
+                    headlineText="Create and Manage Tournaments"
+                    text="Easily manage your tournaments: add players, start rounds, and let the system advance winners automatically until a champion is crowned."
                     switchOrder={false}
                     image={{
-                        url: TournamentGeneratorGifImage,
-                        width: 2600,
-                        height: 1350,
+                        url: OverviewDashboardImage,
+                        width: 2578,
+                        height: 1226,
                         alt: 'overview-dashboard-image',
                     }}
                 />

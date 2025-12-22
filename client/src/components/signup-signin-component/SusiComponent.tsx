@@ -62,7 +62,6 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                         placeholder="mail@example.com"
                         id="email"
                         fullWidth
-                        margin="normal"
                         name="email"
                         label="E-Mail"
                         value={email}
@@ -78,7 +77,6 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                         type="password"
                         id="password"
                         fullWidth
-                        margin="normal"
                         name="password"
                         label="Password"
                         value={password}
@@ -95,7 +93,6 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                             type="password"
                             id="confirmPassword"
                             fullWidth
-                            margin="normal"
                             name="confirmPassword"
                             label="Confirm Password"
                             value={confirmPassword}

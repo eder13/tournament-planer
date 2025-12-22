@@ -26,8 +26,6 @@ $theme-colors-rgb: map-loop($theme-colors, to-rgb, '$value');
 @import 'bootstrap/scss/mixins';
 @import 'bootstrap/scss/utilities';
 
-// and the rest of your Bootstrap components
-
 body {
     background-color: #f4f4f4;
 }

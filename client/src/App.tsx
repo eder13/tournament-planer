@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import Home from './pages/Home';
-import { GlobalContextDispatch } from './context/global-context/GlobalProvider';
-import { useContext, useEffect } from 'react';
+import { GlobalContext } from './context/global-context/GlobalProvider';
+import { useContext } from 'react';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 import SignIn from './pages/SignIn';
@@ -14,27 +14,16 @@ import JointTournament from './pages/JointTournament';
 import RulesPage from './pages/Rules';
 import MatchResultEnter from './pages/MatchResultEnter';
 import Error404 from './pages/Error404';
+import PrivateRoute from './structure/private-route/PrivateRoute';
+import { useInitialProfileData } from './hooks/useInitialProfileData/useInitialProfileData';
 
 const App = () => {
-    const dispatch = useContext(GlobalContextDispatch);
+    useInitialProfileData();
+    const { isMounted } = useContext(GlobalContext);
 
-    useEffect(() => {
-        fetch('/profile')
-            .then((res) => {
-                return res.json();
-            })
-            .then((res) => {
-                if (res?.id && res?.email) {
-                    dispatch({
-                        type: 'loggedIn',
-                        data: {
-                            id: Number(res.id),
-                            email: res.email,
-                        },
-                    });
-                }
-            });
-    }, [dispatch]);
+    if (!isMounted) {
+        return null;
+    }
 
     return (
         <BrowserRouter>
@@ -43,14 +32,6 @@ const App = () => {
                 <Route
                     index
                     element={<Home />}
-                />
-                <Route
-                    path={CommonConstants.Routes.TournamentDetails}
-                    element={<TournamentDetailPage />}
-                />
-                <Route
-                    path={CommonConstants.Routes.Rules}
-                    element={<RulesPage />}
                 />
                 <Route
                     path={CommonConstants.Routes.Login}
@@ -65,17 +46,29 @@ const App = () => {
                     element={<PasswordForgot />}
                 />
                 <Route
-                    path={CommonConstants.Routes.UserProfile}
-                    element={<UserProfile />}
-                />
-                <Route
                     path={CommonConstants.Routes.JoinTournament}
                     element={<JointTournament />}
                 />
-                <Route
-                    path={CommonConstants.Routes.EnterMatchResult}
-                    element={<MatchResultEnter />}
-                />
+
+                <Route element={<PrivateRoute />}>
+                    <Route
+                        path={CommonConstants.Routes.UserProfile}
+                        element={<UserProfile />}
+                    />
+                    <Route
+                        path={CommonConstants.Routes.EnterMatchResult}
+                        element={<MatchResultEnter />}
+                    />
+                    <Route
+                        path={CommonConstants.Routes.TournamentDetails}
+                        element={<TournamentDetailPage />}
+                    />
+                    <Route
+                        path={CommonConstants.Routes.Rules}
+                        element={<RulesPage />}
+                    />
+                </Route>
+
                 <Route
                     path="*"
                     element={<Error404 />}

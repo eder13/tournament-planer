@@ -30,7 +30,7 @@ export class TournamentService {
         });
 
         // generate the matches for the rounds
-        // BYE Players that adance automatically
+        // BYE Players that advance automatically
         for (const p of byePlayers) {
             await Database.getInstance().match.create({
                 data: {

@@ -21,21 +21,15 @@ export class AuthModule implements Module {
         this.server.auth.strategy(name, cookie, {
             cookie: {
                 name: 'sid-example',
-
-                // Don't forget to change it to your own secret password!
                 password:
                     process.env.COOKIE_SECRET ??
                     'CO4NRP1HMALxxCFnRZABFA7GOJtzU_gI',
-
-                // For working via HTTP in localhost
                 isSecure: process.env.ENV !== 'dev',
-                isHttpOnly: true, // Prevent JavaScript access
+                isHttpOnly: true,
                 path: '/',
-
-                //sameSite: 'Lax', // Adjust for cross-origin (use 'None' if needed)
             },
 
-            redirectTo: '/login',
+            redirectTo: '/signin',
 
             validate: this.validate,
         });

@@ -3,25 +3,25 @@ import path from 'path';
 import fs from 'fs';
 
 const distClientReactOutput = path.join(__dirname, '../../client/dist');
-const uploadsDirectory = path.join(__dirname, '../uploads');
+const staticAssetsServerDirectory = path.join(__dirname, '../assets');
 
-// this code serves the static output of react and its assets and allows to use client side routing properly
-// when the server fetches react
 export const staticRoutes: ServerRoute[] = [
     {
         method: 'GET',
-        path: '/uploads/{param*}',
+        path: '/staticassets/{param*}',
         handler: {
             directory: {
-                path: uploadsDirectory,
+                path: staticAssetsServerDirectory,
                 index: false,
                 listing: false,
             },
         },
     },
     {
+        // this code serves the static output of react and its assets and allows to use client side routing properly
+        // when the server fetches react
         method: 'GET',
-        path: '/{param*}', // single catch-all route
+        path: '/{param*}',
         options: {
             auth: { mode: 'try' },
             files: {
