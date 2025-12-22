@@ -4,6 +4,7 @@ export default {
         Login: '/signin',
         Register: '/signup',
         PasswordForgot: '/forgot-password',
+        ResendActivationLink: '/account/activate',
         UserProfile: '/userprofile',
         Rules: '/rules',
         TournamentDetails: '/userprofile/tournaments/:tournamentId',

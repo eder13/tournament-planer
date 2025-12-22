@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
-import Home from './pages/Home';
 import { GlobalContext } from './context/global-context/GlobalProvider';
 import { useContext } from 'react';
+import { useInitialProfileData } from './hooks/useInitialProfileData/useInitialProfileData';
+import Home from './pages/Home';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 import SignIn from './pages/SignIn';
@@ -14,8 +15,8 @@ import JointTournament from './pages/JointTournament';
 import RulesPage from './pages/Rules';
 import MatchResultEnter from './pages/MatchResultEnter';
 import Error404 from './pages/Error404';
+import ActivationAccount from './pages/ActivationAccount';
 import PrivateRoute from './structure/private-route/PrivateRoute';
-import { useInitialProfileData } from './hooks/useInitialProfileData/useInitialProfileData';
 
 const App = () => {
     useInitialProfileData();
@@ -44,6 +45,10 @@ const App = () => {
                 <Route
                     path={CommonConstants.Routes.PasswordForgot}
                     element={<PasswordForgot />}
+                />
+                <Route
+                    path={CommonConstants.Routes.ResendActivationLink}
+                    element={<ActivationAccount />}
                 />
                 <Route
                     path={CommonConstants.Routes.JoinTournament}

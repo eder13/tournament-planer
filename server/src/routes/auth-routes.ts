@@ -55,4 +55,24 @@ export const authRoutes: ServerRoute[] = [
             },
         },
     },
+    {
+        method: 'GET',
+        path: '/verifyuser/{token}',
+        handler: 'AuthController.registerVerify',
+        options: {
+            auth: {
+                mode: 'try',
+            },
+        },
+    },
+    {
+        method: 'POST',
+        path: '/user/activate',
+        handler: 'AuthController.activateResendMailAccount',
+        options: {
+            auth: {
+                mode: 'try',
+            },
+        },
+    },
 ];

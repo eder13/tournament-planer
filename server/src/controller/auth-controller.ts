@@ -7,8 +7,8 @@ import JWTHelper from '../helpers/jwt';
 import MailService from '../services/mail-services/mail-service';
 import Logger from '../helpers/logger';
 import { Controller } from '../decorators/Controller';
-import { v4 as uuidv4 } from 'uuid';
 import { ServerURLUtils } from '../helpers/url';
+import TokenHelper from '../helpers/token';
 
 const HASH_SALT_ROUNDS = 10;
 
@@ -16,6 +16,37 @@ const HASH_SALT_ROUNDS = 10;
 export class AuthController implements BaseController {
     public name = 'AuthController';
     private readonly mailService = new MailService();
+
+    private async sendEmail(mail: string, token: string, h: ResponseToolkit) {
+        const url = new URL(
+            `${ServerURLUtils.getHostName()}/verifyuser/${token}`
+        );
+
+        try {
+            await this.mailService.sendMail(
+                mail,
+                'Registration',
+                /*html*/ `
+                    <h1>Registration: Account Activation</h1> 
+                    <a href="${url}">Click here to activate your account and finish your registration.</a> 
+                    <br /> <br /> 
+                    <small>You have 1 hour before this email expires.</small>
+                `
+            );
+        } catch (e) {
+            if (e instanceof Error) {
+                Logger.error(e.message);
+            } else {
+                Logger.error('Failed to sent Mail for Registration.');
+            }
+
+            return h
+                .redirect('/signup?email_error_generating=true')
+                .code(HttpCode.INTERNAL_SERVER_ERROR);
+        }
+
+        return h.redirect('/signup?email_sent=true');
+    }
 
     async login(
         request: Request<{
@@ -42,6 +73,10 @@ export class AuthController implements BaseController {
                 email,
             },
         });
+
+        if (user && !user.emailVerified) {
+            return h.redirect('/signin?account_not_activated=true');
+        }
 
         if (user && (await bcrypt.compare(password, user.password))) {
             request.cookieAuth.set({ id: user.id });
@@ -90,7 +125,7 @@ export class AuthController implements BaseController {
         url.searchParams.set('token', emailTokenReset);
 
         try {
-            await this.mailService.sentMail(
+            await this.mailService.sendMail(
                 email,
                 'Password Reset',
                 /*html*/ `
@@ -261,35 +296,222 @@ export class AuthController implements BaseController {
         }
 
         const user = await Database.getInstance().user.findUnique({
-            where: {
-                email,
+            where: { email },
+            include: {
+                verificationTokens: {
+                    orderBy: { expiresAt: 'desc' },
+                    take: 1,
+                },
             },
         });
 
-        if (user !== null) {
-            return h
-                .response({
-                    message: 'This E-Mail Already exists',
-                })
-                .type(ContentType.APPLICATION_JSON)
-                .code(HttpCode.BAD_REQUEST);
+        if (user !== null && user.emailVerified) {
+            Logger.info(
+                `User ${user.email} already registered and activated - duplicate E-Mail.`
+            );
+
+            return h.redirect('/signup?email_already_exists=true');
         }
 
-        await Database.getInstance().user.create({
+        if (
+            user !== null &&
+            !user.emailVerified &&
+            user.verificationTokens[0].token &&
+            user.verificationTokens[0].expiresAt.getTime() < Date.now()
+        ) {
+            Logger.info(
+                `User ${user.email} already registered but did not confirm account. Regenerating token.`
+            );
+
+            const registrationToken = TokenHelper.generateToken();
+            const expires = TokenHelper.getTokenLifeTime1Hour();
+
+            await Database.getInstance().verificationToken.updateMany({
+                where: { userId: user.id },
+                data: {
+                    token: registrationToken,
+                    expiresAt: expires,
+                },
+            });
+
+            return this.sendEmail(email, registrationToken, h);
+        }
+
+        if (
+            user !== null &&
+            !user.emailVerified &&
+            user.verificationTokens[0].token
+        ) {
+            return h.redirect(
+                '/signup?account_not_activated_but_registered=true'
+            );
+        }
+
+        const newRegisteredUser = await Database.getInstance().user.create({
             data: {
                 email,
                 password: await bcrypt.hash(password, HASH_SALT_ROUNDS),
             },
         });
 
-        const registeredUser = await Database.getInstance().user.findUnique({
-            where: {
-                email,
+        const registrationToken = TokenHelper.generateToken();
+        const expires = TokenHelper.getTokenLifeTime1Hour();
+
+        await Database.getInstance().verificationToken.create({
+            data: {
+                userId: newRegisteredUser.id,
+                token: registrationToken,
+                expiresAt: expires,
             },
         });
 
-        request.cookieAuth.set({ id: registeredUser?.id });
+        return this.sendEmail(email, registrationToken, h);
+    }
+
+    async registerVerify(
+        request: Request<{
+            Params: {
+                token: string;
+            };
+        }>,
+        h: ResponseToolkit
+    ) {
+        const { token } = request.params;
+
+        if (!token) {
+            return h
+                .response({
+                    message: 'Server Side Validation Failed.',
+                })
+                .type(ContentType.APPLICATION_JSON)
+                .code(HttpCode.UNAUTHORIZED);
+        }
+
+        const verification =
+            await Database.getInstance().verificationToken.findUnique({
+                where: { token },
+            });
+
+        if (!verification || verification.expiresAt.getTime() < Date.now()) {
+            return h.response(/*html*/ `
+                <html>
+                    <head>
+                        <meta
+                            name="viewport"
+                            content="width=device-width, initial-scale=1.0"
+                        />
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+                    </head>
+                    <body>
+                        <div class="container mt-5">
+                            <div class="alert alert-info" role="info">
+                                Your E-Mail did already expire.
+                                Your Account is not activated yet. Please confirm the
+                                link from the confirmation mail. If the link expired,
+                                you can get a new Link
+                                <a href="/account/activate">
+                                    here
+                                </a>
+                                by specifying your E-Mail.
+                            </div>
+                        </div>
+                    </body>
+                </html>`);
+        }
+
+        await Database.getInstance().user.update({
+            where: { id: verification.userId },
+            data: { emailVerified: true },
+        });
+
+        await Database.getInstance().verificationToken.delete({
+            where: { id: verification.id },
+        });
+
+        request.cookieAuth.set({ id: verification.userId });
 
         return h.redirect('/userprofile');
+    }
+
+    async activateResendMailAccount(
+        request: Request<{
+            Payload: {
+                email: string | undefined;
+            };
+        }>,
+        h: ResponseToolkit
+    ) {
+        const { email } = request.payload;
+
+        if (!email) {
+            return h
+                .response({
+                    message: 'Server Side Validation Failed.',
+                })
+                .type(ContentType.APPLICATION_JSON)
+                .code(HttpCode.UNAUTHORIZED);
+        }
+
+        const user = await Database.getInstance().user.findUnique({
+            where: { email },
+            include: {
+                verificationTokens: {
+                    orderBy: { expiresAt: 'desc' },
+                    take: 1,
+                },
+            },
+        });
+
+        if (!user || user?.emailVerified) {
+            return h
+                .response({
+                    message: 'Server Side Validation Failed.',
+                })
+                .type(ContentType.APPLICATION_JSON)
+                .code(HttpCode.UNAUTHORIZED);
+        }
+
+        if (
+            user !== null &&
+            !user.emailVerified &&
+            user.verificationTokens[0].token &&
+            user.verificationTokens[0].expiresAt.getTime() < Date.now()
+        ) {
+            Logger.info(
+                `User ${user.email} already registered but did not confirm account. Regenerating token.`
+            );
+
+            const registrationToken = TokenHelper.generateToken();
+            const expires = TokenHelper.getTokenLifeTime1Hour();
+
+            await Database.getInstance().verificationToken.updateMany({
+                where: { userId: user.id },
+                data: {
+                    token: registrationToken,
+                    expiresAt: expires,
+                },
+            });
+
+            return this.sendEmail(email, registrationToken, h);
+        }
+
+        return h.response(/*html*/ `
+            <html>
+                <head>
+                    <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1.0"
+                    />
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+                </head>
+                <body>
+                    <div class="container mt-5">
+                        <div class="alert alert-info" role="info">
+                            Your Activation Link is still valid. Please search for your E-Mail in your inbox to activate the account.
+                        </div>
+                        <a href="/">Home</a>
+                    </div>
+                </body>
+            </html>`);
     }
 }

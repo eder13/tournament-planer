@@ -16,7 +16,7 @@ class MailService {
         });
     }
 
-    sentMail = async (email: string, subject: string, textHTML: string) => {
+    sendMail = async (email: string, subject: string, textHTML: string) => {
         const info = await this?.transporter?.sendMail({
             from: '"Knockout Tournament Planner" <no-reply@tournament-planer.com>',
             to: email,

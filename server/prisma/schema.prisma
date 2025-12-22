@@ -17,8 +17,21 @@ model User {
   id                Int                  @id @default(autoincrement())
   email             String               @unique
   password          String
+  emailVerified     Boolean              @default(false)
 
   tournaments Tournament[]
+  verificationTokens VerificationToken[]
+}
+
+model VerificationToken {
+  id                Int                  @id @default(autoincrement())
+  token             String               @unique
+  userId            Int
+  expiresAt         DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Tournament {

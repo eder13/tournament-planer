@@ -42,6 +42,78 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                 </Alert>
             )}
 
+            {params.get('email_error_generating') && (
+                <Alert
+                    className="mb-3"
+                    severity="error"
+                >
+                    <FontAwesomeIcon icon="xmark" />
+                    <span>
+                        There was an error while trying to register. Please try
+                        again.
+                    </span>
+                </Alert>
+            )}
+
+            {params.get('email_already_exists') && (
+                <Alert
+                    className="mb-3"
+                    severity="info"
+                >
+                    <FontAwesomeIcon icon="info" />
+                    <span>
+                        The account is already registered. Please Login or click
+                        on the forgot password button if you do not know your
+                        password.
+                    </span>
+                </Alert>
+            )}
+
+            {params.get('account_not_activated') && (
+                <Alert
+                    className="mb-3"
+                    severity="info"
+                >
+                    <FontAwesomeIcon icon="info" />
+                    <span>
+                        Your Account is not activated yet. Please confirm the
+                        link from the confirmation mail. If the link expired,
+                        you can get a new Link{' '}
+                        <Link to={CommonConstants.Routes.ResendActivationLink}>
+                            here
+                        </Link>{' '}
+                        by specifying your E-Mail.
+                    </span>
+                </Alert>
+            )}
+
+            {params.get('account_not_activated_but_registered') && (
+                <Alert
+                    className="mb-3"
+                    severity="info"
+                >
+                    <FontAwesomeIcon icon="info" />
+                    <span>
+                        Your Account is already registered but not activated
+                        yet. Please confirm the link from the confirmation mail.
+                    </span>
+                </Alert>
+            )}
+
+            {params.get('email_sent') && (
+                <Alert
+                    className="mb-3"
+                    severity="success"
+                >
+                    <FontAwesomeIcon icon="check" />
+                    <span>
+                        User created. To finish your registration please confirm
+                        your account by clicking the link in the registration
+                        mail you received.
+                    </span>
+                </Alert>
+            )}
+
             <form
                 {...(isFormValid
                     ? {
