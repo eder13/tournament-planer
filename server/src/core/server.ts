@@ -52,7 +52,7 @@ const server = new Hapi.Server({
     server
         .start()
         .then(() => {
-            Logger.info(`Listening on port ${port}...`);
+            Logger.info(`Server running at ${server.info.uri}...`);
         })
         .catch((e) => {
             Logger.error('Could not start server, reason: ' + e.message);

@@ -21,6 +21,19 @@ model User {
 
   tournaments Tournament[]
   verificationTokens VerificationToken[]
+  passwordResetVerificationTokens PasswordResetVerificationToken[]
+}
+
+model PasswordResetVerificationToken {
+  id                Int                  @id @default(autoincrement())
+  jti               String               @unique
+  userId            Int
+  expiresAt         DateTime
+  used              Boolean
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {

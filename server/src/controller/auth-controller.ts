@@ -17,9 +17,13 @@ export class AuthController implements BaseController {
     public name = 'AuthController';
     private readonly mailService = new MailService();
 
-    private async sendEmail(mail: string, token: string, h: ResponseToolkit) {
+    private async sendEmail(
+        mail: string,
+        unhashedRegistrationToken: string,
+        h: ResponseToolkit
+    ) {
         const url = new URL(
-            `${ServerURLUtils.getHostName()}/verifyuser/${token}`
+            `${ServerURLUtils.getHostName()}/verifyuser/${unhashedRegistrationToken}`
         );
 
         try {
@@ -120,7 +124,22 @@ export class AuthController implements BaseController {
                 .code(HttpCode.UNAUTHORIZED);
         }
 
-        const emailTokenReset = await JWTHelper.generateJWTEmailReset(email);
+        const emailTokenJTI = TokenHelper.generateToken();
+        const emailTokenJTIHashed = TokenHelper.hashToken(emailTokenJTI);
+
+        await Database.getInstance().passwordResetVerificationToken.create({
+            data: {
+                userId: user.id,
+                jti: emailTokenJTIHashed,
+                expiresAt: TokenHelper.getTokenLifeTime1Hour(),
+                used: false,
+            },
+        });
+
+        const emailTokenReset = await JWTHelper.generateJWTEmailReset(
+            email,
+            emailTokenJTI
+        );
         const url = new URL(`${ServerURLUtils.getHostName()}/change-password`);
         url.searchParams.set('token', emailTokenReset);
 
@@ -183,6 +202,30 @@ export class AuthController implements BaseController {
                 request.payload?.confirmpassword &&
                 request.method === HTTPMethod.POST
             ) {
+                const passwordResetToken =
+                    await Database.getInstance().passwordResetVerificationToken.findUnique(
+                        {
+                            where: {
+                                jti: TokenHelper.hashToken(
+                                    decodedTokenResult.jti
+                                ),
+                            },
+                        }
+                    );
+
+                if (
+                    !passwordResetToken ||
+                    passwordResetToken.used ||
+                    passwordResetToken.expiresAt.getTime() < Date.now()
+                ) {
+                    return h
+                        .response({
+                            message: 'Token expired or invalid.',
+                        })
+                        .type(ContentType.APPLICATION_JSON)
+                        .code(HttpCode.UNAUTHORIZED);
+                }
+
                 const user = await Database.getInstance().user.findUnique({
                     where: {
                         email: decodedTokenResult.email as string,
@@ -207,6 +250,17 @@ export class AuthController implements BaseController {
                         ),
                     },
                 });
+
+                await Database.getInstance().passwordResetVerificationToken.update(
+                    {
+                        where: {
+                            jti: TokenHelper.hashToken(decodedTokenResult.jti),
+                        },
+                        data: {
+                            used: true,
+                        },
+                    }
+                );
 
                 return h.redirect(
                     '/forgot-password?password_successfully_reset=true'
@@ -316,20 +370,22 @@ export class AuthController implements BaseController {
         if (
             user !== null &&
             !user.emailVerified &&
-            user.verificationTokens[0].token &&
-            user.verificationTokens[0].expiresAt.getTime() < Date.now()
+            user.verificationTokens?.[0]?.token &&
+            user.verificationTokens?.[0]?.expiresAt.getTime() < Date.now()
         ) {
             Logger.info(
                 `User ${user.email} already registered but did not confirm account. Regenerating token.`
             );
 
             const registrationToken = TokenHelper.generateToken();
+            const hashedRegistrationToken =
+                TokenHelper.hashToken(registrationToken);
             const expires = TokenHelper.getTokenLifeTime1Hour();
 
             await Database.getInstance().verificationToken.updateMany({
                 where: { userId: user.id },
                 data: {
-                    token: registrationToken,
+                    token: hashedRegistrationToken,
                     expiresAt: expires,
                 },
             });
@@ -340,7 +396,7 @@ export class AuthController implements BaseController {
         if (
             user !== null &&
             !user.emailVerified &&
-            user.verificationTokens[0].token
+            user.verificationTokens?.[0]?.token
         ) {
             return h.redirect(
                 '/signup?account_not_activated_but_registered=true'
@@ -355,12 +411,14 @@ export class AuthController implements BaseController {
         });
 
         const registrationToken = TokenHelper.generateToken();
+        const hashedRegistrationToken =
+            TokenHelper.hashToken(registrationToken);
         const expires = TokenHelper.getTokenLifeTime1Hour();
 
         await Database.getInstance().verificationToken.create({
             data: {
                 userId: newRegisteredUser.id,
-                token: registrationToken,
+                token: hashedRegistrationToken,
                 expiresAt: expires,
             },
         });
@@ -389,10 +447,30 @@ export class AuthController implements BaseController {
 
         const verification =
             await Database.getInstance().verificationToken.findUnique({
-                where: { token },
+                where: { token: TokenHelper.hashToken(token) },
             });
 
-        if (!verification || verification.expiresAt.getTime() < Date.now()) {
+        if (!verification) {
+            return h.response(/*html*/ `
+                <html>
+                    <head>
+                        <meta
+                            name="viewport"
+                            content="width=device-width, initial-scale=1.0"
+                        />
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+                    </head>
+                    <body>
+                        <div class="container mt-5">
+                            <div class="alert alert-danger" role="danger">
+                                Your provided Token is invalid.
+                            </div>
+                        </div>
+                    </body>
+                </html>`);
+        }
+
+        if (verification && verification.expiresAt.getTime() < Date.now()) {
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -474,20 +552,22 @@ export class AuthController implements BaseController {
         if (
             user !== null &&
             !user.emailVerified &&
-            user.verificationTokens[0].token &&
-            user.verificationTokens[0].expiresAt.getTime() < Date.now()
+            user.verificationTokens?.[0]?.token &&
+            user.verificationTokens?.[0]?.expiresAt.getTime() < Date.now()
         ) {
             Logger.info(
                 `User ${user.email} already registered but did not confirm account. Regenerating token.`
             );
 
             const registrationToken = TokenHelper.generateToken();
+            const hashedRegistrationToken =
+                TokenHelper.hashToken(registrationToken);
             const expires = TokenHelper.getTokenLifeTime1Hour();
 
             await Database.getInstance().verificationToken.updateMany({
                 where: { userId: user.id },
                 data: {
-                    token: registrationToken,
+                    token: hashedRegistrationToken,
                     expiresAt: expires,
                 },
             });

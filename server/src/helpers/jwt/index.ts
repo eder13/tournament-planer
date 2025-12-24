@@ -9,8 +9,8 @@ class JWTHelper {
     );
     static readonly issuer = process.env.JWT_AUD ?? '';
 
-    static async generateJWTEmailReset(email: string) {
-        const token = await new SignJWT({ email })
+    static async generateJWTEmailReset(email: string, jti: string) {
+        const token = await new SignJWT({ email, jti })
             .setProtectedHeader({ alg: 'HS256' })
             .setIssuedAt()
             .setExpirationTime('1h')
@@ -44,6 +44,7 @@ class JWTHelper {
 
             return {
                 email: jwt.payload.email,
+                jti: jwt.payload.jti,
                 success: true,
             };
         } catch (e) {
@@ -55,6 +56,7 @@ class JWTHelper {
 
             return {
                 email: '',
+                jti: '',
                 success: false,
             };
         }
