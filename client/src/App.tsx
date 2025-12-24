@@ -17,9 +17,11 @@ import MatchResultEnter from './pages/MatchResultEnter';
 import Error404 from './pages/Error404';
 import ActivationAccount from './pages/ActivationAccount';
 import PrivateRoute from './structure/private-route/PrivateRoute';
+import { useSetCSRFToken } from './hooks/useSetCSRFToken/useSetCSRFToken';
 
 const App = () => {
     useInitialProfileData();
+    useSetCSRFToken();
     const { isMounted } = useContext(GlobalContext);
 
     if (!isMounted) {

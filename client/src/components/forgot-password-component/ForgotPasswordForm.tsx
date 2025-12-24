@@ -1,10 +1,12 @@
 import { Stack, TextField, Button, Alert } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CommonConstants from '../../constants/CommonConstants';
+import { GlobalContext } from '../../context/global-context/GlobalProvider';
 
 const ForgotPasswordForm = () => {
+    const { csrfToken } = useContext(GlobalContext);
     const [forgotEmail, setForgotEmail] = useState('');
     const [searchParams] = useSearchParams();
 
@@ -86,6 +88,12 @@ const ForgotPasswordForm = () => {
                                 : ' '
                         }
                     ></TextField>
+                    <input
+                        type="hidden"
+                        name="crumb"
+                        id="crumb"
+                        value={csrfToken}
+                    />
                     <Button
                         className="mb-3"
                         variant="contained"

@@ -1,8 +1,9 @@
 import { Stack, TextField, Button, Alert } from '@mui/material';
-import { useState, type FC } from 'react';
+import { useContext, useState, type FC } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import CommonConstants from '../../constants/CommonConstants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { GlobalContext } from '../../context/global-context/GlobalProvider';
 
 type Props = {
     isSignUp?: boolean;
@@ -11,6 +12,7 @@ type Props = {
 const MIN_PASSWORD_LENGTH = 8;
 
 const SusiComponent: FC<Props> = ({ isSignUp }) => {
+    const { csrfToken } = useContext(GlobalContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -177,6 +179,12 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                             }
                         ></TextField>
                     )}
+                    <input
+                        type="hidden"
+                        name="crumb"
+                        id="crumb"
+                        value={csrfToken}
+                    />
                     <Button
                         className="mb-3"
                         variant="contained"

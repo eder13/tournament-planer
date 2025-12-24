@@ -14,12 +14,13 @@ import {
     HTTPMethod,
     HttpCode,
 } from '../../../../../server/src/constants/common';
-import { useEffect, useState, type Dispatch, type FC } from 'react';
+import { useContext, useEffect, useState, type Dispatch, type FC } from 'react';
 import type {
     DataTournamentRoundAndMatchesResult,
     Player,
 } from '../../../types/common';
 import KnockoutTournamentPlan from '../../knockout-tournament-plan/KnockoutTournamentPlan';
+import { GlobalContext } from '../../../context/global-context/GlobalProvider';
 
 type Props = {
     started: boolean;
@@ -40,6 +41,8 @@ const TournamentDetailsContent: FC<Props> = ({
     onClickStartTournament,
     tournamentId,
 }) => {
+    const { csrfToken } = useContext(GlobalContext);
+
     const [tournamentTree, setTournamentTree] =
         useState<DataTournamentRoundAndMatchesResult>();
 
@@ -116,6 +119,10 @@ const TournamentDetailsContent: FC<Props> = ({
                                                 const playerId = player.id;
 
                                                 fetch(`/players/${player.id}`, {
+                                                    headers: {
+                                                        'X-CSRF-Token':
+                                                            csrfToken,
+                                                    },
                                                     method: HTTPMethod.DELETE,
                                                 }).then((res) => {
                                                     if (

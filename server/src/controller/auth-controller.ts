@@ -295,6 +295,12 @@ export class AuthController implements BaseController {
                                     <label class="form-label" for="confirmpassword">Confirm Password: </label>
                                     <input class="form-control" id="confirmpassword" name="confirmpassword" type="password"/>
                                 </div>
+                                <input
+                                    type="hidden"
+                                    name="crumb"
+                                    id="crumb"
+                                    value="${request.plugins.crumb}"
+                                />
                                 <div class="mb-3">
                                     <input class="btn btn-primary" value="Change Password" type="submit">
                                 </div>

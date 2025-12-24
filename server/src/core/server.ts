@@ -5,6 +5,7 @@ import { AuthModule } from '../modules';
 import Logger from '../helpers/logger';
 import path from 'path';
 import Inert from '@hapi/inert';
+import Crumb from '@hapi/crumb';
 import { tournamentRoutes } from '../routes/tournament-routes';
 import { TournamentController } from '../controller/tournament-controller';
 import { staticRoutes } from '../routes/static-route';
@@ -30,7 +31,20 @@ const server = new Hapi.Server({
 });
 
 (async () => {
-    await ServerHelper.registerPlugins(server, [Inert]);
+    await ServerHelper.registerPlugins(server, [
+        { plugin: Inert },
+        {
+            plugin: Crumb,
+            options: {
+                cookieOptions: {
+                    isHttpOnly: false,
+                    isSameSite: 'Lax',
+                    isSecure: process.env.ENV !== 'dev',
+                },
+                logUnauthorized: true,
+            },
+        },
+    ]);
     await ServerHelper.registerModules([new AuthModule(server)]);
     ServerHelper.registerRoutes([
         ...staticRoutes,

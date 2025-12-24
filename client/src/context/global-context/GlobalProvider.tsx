@@ -13,6 +13,7 @@ interface State {
         email: string;
         isLoggedIn: boolean;
     };
+    csrfToken: string;
 }
 
 type Action =
@@ -28,6 +29,10 @@ type Action =
       }
     | {
           type: 'mounted';
+      }
+    | {
+          type: 'setCsrf';
+          data: string;
       };
 
 const initialContextState: State = {
@@ -37,6 +42,7 @@ const initialContextState: State = {
         email: '',
         isLoggedIn: false,
     },
+    csrfToken: '',
 };
 
 export const GlobalContext = createContext(initialContextState);
@@ -68,6 +74,12 @@ function globalReducer(state: State, action: Action) {
             return {
                 ...state,
                 isMounted: true,
+            };
+        }
+        case 'setCsrf': {
+            return {
+                ...state,
+                csrfToken: action.data,
             };
         }
         default:

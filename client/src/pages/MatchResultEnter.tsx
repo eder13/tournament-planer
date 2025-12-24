@@ -1,10 +1,12 @@
 import { useNavigate, useParams } from 'react-router';
 import Page from '../structure/page/Page';
 import { Alert, Button, Stack, TextField } from '@mui/material';
-import { useState, type FormEvent } from 'react';
+import { useContext, useState, type FormEvent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { GlobalContext } from '../context/global-context/GlobalProvider';
 
 const MatchResultEnter = () => {
+    const { csrfToken } = useContext(GlobalContext);
     const params = useParams<{
         tournamentId: string;
         roundId: string;
@@ -41,6 +43,7 @@ const MatchResultEnter = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
                 },
                 body: JSON.stringify({
                     result: {

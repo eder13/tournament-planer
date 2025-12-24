@@ -16,12 +16,18 @@ export class ServerHelper {
         serverControllers.push(...controllers);
     }
 
-    static async registerPlugins(server: Server, plugins: any[]) {
+    static async registerPlugins(
+        server: Server,
+        plugins: Array<{
+            plugin: any;
+            options?: Record<string, unknown> | undefined;
+        }>
+    ) {
         Logger.info('Registering Plugins...');
 
         await Promise.all(
-            plugins.map((plugin) => {
-                server.register(plugin);
+            plugins.map((el) => {
+                server.register({ plugin: el.plugin, options: el.options });
             })
         );
     }

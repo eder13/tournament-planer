@@ -2,9 +2,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Alert, Stack, TextField, Button } from '@mui/material';
 import { Link, useSearchParams } from 'react-router';
 import CommonConstants from '../../constants/CommonConstants';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { GlobalContext } from '../../context/global-context/GlobalProvider';
 
 export const NewActivationLink = () => {
+    const { csrfToken } = useContext(GlobalContext);
     const [searchParams] = useSearchParams();
     const [email, setEmail] = useState('');
 
@@ -73,6 +75,12 @@ export const NewActivationLink = () => {
                                 : ' '
                         }
                     ></TextField>
+                    <input
+                        type="hidden"
+                        name="crumb"
+                        id="crumb"
+                        value={csrfToken}
+                    />
                     <Button
                         className="mb-3"
                         variant="contained"

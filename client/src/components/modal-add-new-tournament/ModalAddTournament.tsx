@@ -6,7 +6,8 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { GlobalContext } from '../../context/global-context/GlobalProvider';
 
 const style = {
     position: 'absolute',
@@ -21,6 +22,7 @@ const style = {
 };
 
 const ModalAddTournament = () => {
+    const { csrfToken } = useContext(GlobalContext);
     const [open, setOpen] = useState(false);
     const [text, setText] = useState('');
 
@@ -81,6 +83,12 @@ const ModalAddTournament = () => {
                                         : ''
                                 }
                             ></TextField>
+                            <input
+                                type="hidden"
+                                name="crumb"
+                                id="crumb"
+                                value={csrfToken}
+                            />
                             <Button
                                 className="mb-3"
                                 variant="contained"

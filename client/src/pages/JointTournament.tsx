@@ -1,9 +1,12 @@
 import { Button, Stack, TextField } from '@mui/material';
 import Page from '../structure/page/Page';
 import { useParams } from 'react-router';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { GlobalContext } from '../context/global-context/GlobalProvider';
 
 const JointTournament = () => {
+    const { csrfToken } = useContext(GlobalContext);
+
     const { tournamentId = '' } = useParams<{ tournamentId: string }>();
     const [name, setName] = useState('');
 
@@ -42,6 +45,12 @@ const JointTournament = () => {
                                 : ''
                         }
                     ></TextField>
+                    <input
+                        type="hidden"
+                        name="crumb"
+                        id="crumb"
+                        value={csrfToken}
+                    />
                     <Button
                         className="mb-3"
                         variant="contained"
