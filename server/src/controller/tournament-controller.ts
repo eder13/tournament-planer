@@ -39,6 +39,8 @@ export class TournamentController implements BaseController {
     ) {
         const { name } = request.payload;
 
+        console.log('#####** request.payload', request.payload);
+
         if (!name) {
             return h.response().code(HttpCode.BAD_REQUEST);
         }
@@ -52,7 +54,7 @@ export class TournamentController implements BaseController {
             },
         });
 
-        return h.redirect('/userprofile?created=true');
+        return h.response().code(HttpCode.CREATED);
     }
 
     public async getTournamentById(
@@ -137,6 +139,7 @@ export class TournamentController implements BaseController {
         });
 
         if (tournament?.started) {
+            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -158,6 +161,7 @@ export class TournamentController implements BaseController {
         }
 
         if (!name || !id || tournament?.started) {
+            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -197,6 +201,7 @@ export class TournamentController implements BaseController {
             },
         });
 
+        // TODO: Move this code to React instead of an HTML Template
         return h.response(/*html*/ `
             <html>
                 <head>

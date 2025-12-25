@@ -166,7 +166,7 @@ export class AuthController implements BaseController {
                 .code(HttpCode.INTERNAL_SERVER_ERROR);
         }
 
-        return h.redirect('/forgot-password?email_successfully_sent=true');
+        return h.response().code(HttpCode.OK);
     }
 
     async changePassword(
@@ -262,11 +262,10 @@ export class AuthController implements BaseController {
                     }
                 );
 
-                return h.redirect(
-                    '/forgot-password?password_successfully_reset=true'
-                );
+                return h.response().code(HttpCode.OK);
             }
 
+            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -285,7 +284,9 @@ export class AuthController implements BaseController {
                     </head>
                     <body>
                         <div class="container mt-5">
-                            <form method="post" action="/change-password?token=${token}">
+                            <div id="error-password-match" class="alert alert-danger d-none">Paswords Need to match</div>
+                            <div id="error-password-length" class="alert alert-danger d-none">Paswords need to be at least 8 characters long</div>
+                            <form id="password-reset-form" method="post" action="/change-password?token=${token}">
                                 <h1 class="mb-5">Set New Password</h1>
                                 <div class="mb-3">
                                     <label class="form-label" for="password">Password: </label>
@@ -295,16 +296,59 @@ export class AuthController implements BaseController {
                                     <label class="form-label" for="confirmpassword">Confirm Password: </label>
                                     <input class="form-control" id="confirmpassword" name="confirmpassword" type="password"/>
                                 </div>
-                                <input
-                                    type="hidden"
-                                    name="crumb"
-                                    id="crumb"
-                                    value="${request.plugins.crumb}"
-                                />
                                 <div class="mb-3">
-                                    <input class="btn btn-primary" value="Change Password" type="submit">
+                                    <input id="submit-btn" class="btn btn-primary" value="Change Password" type="submit">
                                 </div>
                             </form>
+                            <script>
+                                let init = false;
+                                let pw = '';
+                                let pwConfirm = '';
+
+                                document.getElementById('password-reset-form').addEventListener('change', (e) => {
+                                    if (e.target.id === 'password') {
+                                        pw = e.target.value;
+                                    }
+
+                                    if (e.target.id === 'confirmpassword') {
+                                        pwConfirm = e.target.value
+                                    }
+
+                                    if (pw.length < 8) {
+                                        document.getElementById('error-password-length').classList.remove('d-none');
+                                    } else {
+                                        document.getElementById('error-password-length').classList.add('d-none');
+                                    }
+
+                                    if (pw !== pwConfirm) {
+                                        document.getElementById('error-password-match').classList.remove('d-none');
+                                    } else {
+                                        document.getElementById('error-password-match').classList.add('d-none');
+                                    }
+                                });
+
+                                document.getElementById('password-reset-form').addEventListener('submit', (e) => {
+                                    e.preventDefault();
+
+                                    if (pw.length >=8 && pwConfirm.length >= 8 && pw === pwConfirm) {
+                                        fetch('/change-password?token=${token}', {
+                                            method: 'post',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-Token': "${request.plugins.crumb}"
+                                            },
+                                            body: JSON.stringify({
+                                                password: pw,
+                                                confirmpassword: pwConfirm
+                                            })
+                                        }).then(res => {
+                                            if (res.ok) {
+                                                window.location.href = '/forgot-password?password_successfully_reset=true';
+                                            }
+                                        });
+                                    }
+                                });
+                            </script>
                         </div>
                     </body>
                 </html>`);
@@ -457,6 +501,7 @@ export class AuthController implements BaseController {
             });
 
         if (!verification) {
+            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -477,6 +522,7 @@ export class AuthController implements BaseController {
         }
 
         if (verification && verification.expiresAt.getTime() < Date.now()) {
+            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -581,6 +627,7 @@ export class AuthController implements BaseController {
             return this.sendEmail(email, registrationToken, h);
         }
 
+        // TODO: Move this code to React instead of an HTML Template
         return h.response(/*html*/ `
             <html>
                 <head>

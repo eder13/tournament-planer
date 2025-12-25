@@ -8,6 +8,8 @@ import {
 } from '@mui/material';
 import { useContext, useState } from 'react';
 import { GlobalContext } from '../../context/global-context/GlobalProvider';
+import { HTTPMethod } from '../../../../server/src/constants/common';
+import Logger from '../../../../server/src/helpers/logger';
 
 const style = {
     position: 'absolute',
@@ -55,14 +57,36 @@ const ModalAddTournament = () => {
                         Create a new Tournament
                     </Typography>
                     <form
-                        {...(isFormValid
-                            ? {
-                                  action: '/tournament',
-                                  method: 'post',
-                              }
-                            : {})}
                         style={{
                             minWidth: '300px',
+                        }}
+                        onSubmit={(e) => {
+                            e.preventDefault();
+
+                            if (isFormValid) {
+                                fetch('/tournament', {
+                                    method: HTTPMethod.POST,
+                                    headers: {
+                                        'X-CSRF-Token': csrfToken,
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        name: text,
+                                    }),
+                                })
+                                    .then((res) => {
+                                        if (res.ok) {
+                                            window.location.href =
+                                                '/userprofile?created=true';
+                                        }
+                                        throw new Error(
+                                            'Failed to Create Tournament'
+                                        );
+                                    })
+                                    .catch((e) => {
+                                        Logger.error(e);
+                                    });
+                            }
                         }}
                     >
                         <Stack

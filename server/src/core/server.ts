@@ -1,4 +1,4 @@
-import Hapi from '@hapi/hapi';
+import Hapi, { Request } from '@hapi/hapi';
 import { ServerHelper } from './server-helper';
 import Database from '../db/prisma';
 import { AuthModule } from '../modules';
@@ -36,12 +36,22 @@ const server = new Hapi.Server({
         {
             plugin: Crumb,
             options: {
+                restful: true,
                 cookieOptions: {
                     isHttpOnly: false,
                     isSameSite: 'Lax',
                     isSecure: process.env.ENV !== 'dev',
                 },
                 logUnauthorized: true,
+                skip: (request: Request) => {
+                    return (
+                        // uses plain <form/> for Login and Logout instead of restful - skip CSRF check
+                        // this is fine because my login is same-origin and SameSite=strict
+                        request.method === 'post' &&
+                        (request.path === '/login' ||
+                            request.path === '/logout')
+                    );
+                },
             },
         },
     ]);

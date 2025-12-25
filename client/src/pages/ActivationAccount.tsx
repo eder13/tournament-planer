@@ -4,7 +4,7 @@ import { NewActivationLink } from '../components/new-activation-link-account/New
 const ActivationAccount = () => {
     return (
         <Page>
-            <h1>Enter E-Mail to activate Account</h1>
+            <h1 className="mb-5">Enter E-Mail to activate Account</h1>
             <NewActivationLink />
         </Page>
     );

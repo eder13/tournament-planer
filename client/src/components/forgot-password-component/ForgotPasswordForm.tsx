@@ -1,14 +1,23 @@
-import { Stack, TextField, Button, Alert } from '@mui/material';
+import {
+    Stack,
+    TextField,
+    Button,
+    Alert,
+    CircularProgress,
+} from '@mui/material';
 import { useContext, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CommonConstants from '../../constants/CommonConstants';
 import { GlobalContext } from '../../context/global-context/GlobalProvider';
+import { HTTPMethod } from '../../../../server/src/constants/common';
 
 const ForgotPasswordForm = () => {
     const { csrfToken } = useContext(GlobalContext);
     const [forgotEmail, setForgotEmail] = useState('');
     const [searchParams] = useSearchParams();
+    const [showLoader, setShowLoader] = useState(false);
+    const navigate = useNavigate();
 
     const isSuccessfulEmailSent = searchParams.get('email_successfully_sent');
     const isErrorEmailSent = searchParams.get('email_error_generating');
@@ -59,15 +68,39 @@ const ForgotPasswordForm = () => {
                 </Alert>
             )}
 
+            {showLoader && <CircularProgress className="mb-3" />}
+
             <form
-                {...(isFormValid
-                    ? {
-                          action: '/forgot',
-                          method: 'post',
-                      }
-                    : {})}
                 style={{
                     minWidth: '300px',
+                }}
+                onSubmit={(e) => {
+                    e.preventDefault();
+
+                    if (isFormValid) {
+                        setShowLoader(true);
+
+                        fetch('/forgot', {
+                            method: HTTPMethod.POST,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                email: forgotEmail,
+                            }),
+                        })
+                            .then((res) => {
+                                if (res.ok) {
+                                    navigate(
+                                        '/forgot-password?email_successfully_sent=true'
+                                    );
+                                }
+                            })
+                            .finally(() => {
+                                setShowLoader(false);
+                            });
+                    }
                 }}
             >
                 <Stack
@@ -88,12 +121,6 @@ const ForgotPasswordForm = () => {
                                 : ' '
                         }
                     ></TextField>
-                    <input
-                        type="hidden"
-                        name="crumb"
-                        id="crumb"
-                        value={csrfToken}
-                    />
                     <Button
                         className="mb-3"
                         variant="contained"

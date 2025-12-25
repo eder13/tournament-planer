@@ -1,11 +1,8 @@
 import { Button } from '@mui/material';
 import { Link } from 'react-router';
 import CommonConstants from '../../../constants/CommonConstants';
-import { useContext } from 'react';
-import { GlobalContext } from '../../../context/global-context/GlobalProvider';
 
 const HeaderLoggedInContent = () => {
-    const { csrfToken } = useContext(GlobalContext);
     return (
         <ul>
             <li>
@@ -22,12 +19,6 @@ const HeaderLoggedInContent = () => {
                     method="post"
                     action="/logout"
                 >
-                    <input
-                        type="hidden"
-                        name="crumb"
-                        id="crumb"
-                        value={csrfToken}
-                    />
                     <Button
                         variant="contained"
                         color="error"
