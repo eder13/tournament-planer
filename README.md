@@ -11,14 +11,23 @@ A knockout tournament planner application written in Hapi and React.
 
 ## Setup
 
-1. Create a `.env` file inside `server/` and setup the database as well as other important environment variables, example:
+1. Create the mysql database for the app
+
+```txt
+CREATE DATABASE IF NOT EXISTS db_tournament;
+CREATE USER 'tournament'@'localhost' IDENTIFIED BY 'my-secret-password-locally';
+GRANT ALL PRIVILEGES ON db_tournament.* TO 'tournament'@'localhost';
+GRANT CREATE, DROP, REFERENCES, ALTER ON *.* TO 'tournament'@'localhost';
+```
+
+2. Create a `.env` file inside `server/` and setup the database as well as other important environment variables, example:
 
 ```txt
 PORT="8080"
 PROTOCOL="http"
 HOST="localhost"
 
-DATABASE_URL="mysql://db_tournament:my-secret-password-locally@localhost:3306/db_mario_kart_tournament"
+DATABASE_URL="mysql://tournament:my-secret-password-locally@localhost:3306/db_tournament"
 COOKIE_SECRET="COOKIE_your_complex_secret_here1" # 32 characters long
 JWT_SECRET="TOKEN_your_complex_secret_here12" # 32 characters long
 JWT_AUD="tournament_planer"
@@ -28,8 +37,8 @@ EMAIL_PASSWORD="my-password"
 EMAIL_PORT="587" # 587 or 465
 ```
 
-2. go to `/client` and run `npm i` and `npm run build`
+3. go to `/client` and run `npm i` and `npm run build`
 
-3. go to `/server` and run `npm i` and `npm run build`
+4. go to `/server` and run `npm i` and `npm run build`
 
-4. start the server in production mode inside `/server` by running `build:serve-prod`
+5. start the server in production mode inside `/server` by running `build:serve-prod`
