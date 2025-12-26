@@ -42,7 +42,7 @@ export class TournamentController implements BaseController {
         console.log('#####** request.payload', request.payload);
 
         if (!name) {
-            return h.response().code(HttpCode.BAD_REQUEST);
+            return h.response({}).code(HttpCode.BAD_REQUEST);
         }
 
         await Database.getInstance().tournament.create({
@@ -54,7 +54,7 @@ export class TournamentController implements BaseController {
             },
         });
 
-        return h.response().code(HttpCode.CREATED);
+        return h.response({}).code(HttpCode.CREATED);
     }
 
     public async getTournamentById(
@@ -68,7 +68,7 @@ export class TournamentController implements BaseController {
         const { id = '' } = request.params;
 
         if (!id) {
-            return h.response().code(HttpCode.BAD_REQUEST);
+            return h.response({}).code(HttpCode.BAD_REQUEST);
         }
 
         const data = await Database.getInstance().tournament.findUnique({
@@ -85,7 +85,7 @@ export class TournamentController implements BaseController {
         });
 
         if (!data) {
-            return h.response().code(HttpCode.NOT_FOUND);
+            return h.response({}).code(HttpCode.NOT_FOUND);
         }
 
         return h.response(data).code(HttpCode.OK);
@@ -102,7 +102,7 @@ export class TournamentController implements BaseController {
         const { id = '' } = request.params;
 
         if (!id) {
-            return h.response().code(HttpCode.BAD_REQUEST);
+            return h.response({}).code(HttpCode.BAD_REQUEST);
         }
 
         const data = await Database.getInstance().tournament.delete({
@@ -112,10 +112,10 @@ export class TournamentController implements BaseController {
         });
 
         if (!data) {
-            return h.response().code(HttpCode.NOT_FOUND);
+            return h.response({}).code(HttpCode.NOT_FOUND);
         }
 
-        return h.response().code(HttpCode.NO_CONTENT);
+        return h.response({}).code(HttpCode.NO_CONTENT);
     }
 
     public async joinTournamentById(
@@ -139,7 +139,6 @@ export class TournamentController implements BaseController {
         });
 
         if (tournament?.started) {
-            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -161,7 +160,6 @@ export class TournamentController implements BaseController {
         }
 
         if (!name || !id || tournament?.started) {
-            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -201,7 +199,6 @@ export class TournamentController implements BaseController {
             },
         });
 
-        // TODO: Move this code to React instead of an HTML Template
         return h.response(/*html*/ `
             <html>
                 <head>
@@ -262,7 +259,7 @@ export class TournamentController implements BaseController {
         } catch (e) {
             Logger.error(e);
 
-            return h.response().code(HttpCode.INTERNAL_SERVER_ERROR);
+            return h.response({}).code(HttpCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -306,9 +303,9 @@ export class TournamentController implements BaseController {
                 Logger.error(e);
             }
 
-            return h.response().code(HttpCode.OK);
+            return h.response({}).code(HttpCode.OK);
         } else {
-            return h.response().code(HttpCode.INTERNAL_SERVER_ERROR);
+            return h.response({}).code(HttpCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

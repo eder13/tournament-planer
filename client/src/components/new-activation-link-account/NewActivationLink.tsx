@@ -1,14 +1,24 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Alert, Stack, TextField, Button } from '@mui/material';
-import { Link, useSearchParams } from 'react-router';
+import {
+    Alert,
+    Stack,
+    TextField,
+    Button,
+    CircularProgress,
+} from '@mui/material';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import CommonConstants from '../../constants/CommonConstants';
 import { useContext, useState } from 'react';
 import { GlobalContext } from '../../context/global-context/GlobalProvider';
+import { HTTPMethod } from '../../../../server/src/constants/common';
+import Logger from '../../../../server/src/helpers/logger';
 
 export const NewActivationLink = () => {
     const { csrfToken } = useContext(GlobalContext);
     const [searchParams] = useSearchParams();
     const [email, setEmail] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
+    const navigate = useNavigate();
 
     const emailError =
         email.length > 0 && !CommonConstants.RegExEmail.test(email);
@@ -46,15 +56,41 @@ export const NewActivationLink = () => {
                 </Alert>
             )}
 
+            {showLoader && <CircularProgress className="mb-3" />}
+
             <form
-                {...(isFormValid
-                    ? {
-                          action: '/user/activate',
-                          method: 'post',
-                      }
-                    : {})}
                 style={{
                     minWidth: '300px',
+                }}
+                onSubmit={(e) => {
+                    e.preventDefault();
+
+                    if (isFormValid) {
+                        setShowLoader(true);
+
+                        fetch('/user/activate', {
+                            method: HTTPMethod.POST,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-Token': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                email,
+                            }),
+                        })
+                            .then((res) => {
+                                if (res.ok) {
+                                    navigate('/signup?email_sent=true');
+                                }
+                            })
+                            .catch((e) => {
+                                Logger.error(e);
+                                navigate('/signup?email_error_generating=true');
+                            })
+                            .finally(() => {
+                                setShowLoader(false);
+                            });
+                    }
                 }}
             >
                 <Stack
@@ -75,12 +111,6 @@ export const NewActivationLink = () => {
                                 : ' '
                         }
                     ></TextField>
-                    <input
-                        type="hidden"
-                        name="crumb"
-                        id="crumb"
-                        value={csrfToken}
-                    />
                     <Button
                         className="mb-3"
                         variant="contained"

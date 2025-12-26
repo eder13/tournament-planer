@@ -107,12 +107,6 @@ const ModalAddTournament = () => {
                                         : ''
                                 }
                             ></TextField>
-                            <input
-                                type="hidden"
-                                name="crumb"
-                                id="crumb"
-                                value={csrfToken}
-                            />
                             <Button
                                 className="mb-3"
                                 variant="contained"

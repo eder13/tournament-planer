@@ -61,7 +61,7 @@ export class MatchController implements BaseController {
                 : match.player2_id;
 
         if (winnerId === null) {
-            return h.response().code(HttpCode.INTERNAL_SERVER_ERROR);
+            return h.response({}).code(HttpCode.INTERNAL_SERVER_ERROR);
         }
 
         await Database.getInstance().match.update({
@@ -74,6 +74,6 @@ export class MatchController implements BaseController {
             },
         });
 
-        return h.response().code(HttpCode.OK);
+        return h.response({}).code(HttpCode.OK);
     }
 }

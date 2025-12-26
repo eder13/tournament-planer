@@ -1,9 +1,17 @@
-import { Stack, TextField, Button, Alert } from '@mui/material';
+import {
+    Stack,
+    TextField,
+    Button,
+    Alert,
+    CircularProgress,
+} from '@mui/material';
 import { useContext, useState, type FC } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import CommonConstants from '../../constants/CommonConstants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { GlobalContext } from '../../context/global-context/GlobalProvider';
+import { HTTPMethod } from '../../../../server/src/constants/common';
+import Logger from '../../../../server/src/helpers/logger';
 
 type Props = {
     isSignUp?: boolean;
@@ -16,7 +24,9 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
     const [params] = useSearchParams();
+    const navigate = useNavigate();
 
     const emailError =
         email.length > 0 && !CommonConstants.RegExEmail.test(email);
@@ -116,8 +126,10 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                 </Alert>
             )}
 
+            {showLoader && isSignUp && <CircularProgress className="mb-3" />}
+
             <form
-                {...(isFormValid
+                {...(isFormValid && !isSignUp
                     ? {
                           method: 'post',
                           action: isSignUp ? '/register' : '/login',
@@ -125,6 +137,48 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                     : {})}
                 style={{
                     minWidth: '300px',
+                }}
+                onSubmit={(e) => {
+                    if (isSignUp && isFormValid) {
+                        e.preventDefault();
+                        setShowLoader(true);
+
+                        fetch('/register', {
+                            method: HTTPMethod.POST,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-Token': csrfToken,
+                            },
+                            body: JSON.stringify({
+                                email,
+                                password,
+                                confirmPassword,
+                            }),
+                        })
+                            .then((res) => {
+                                if (res.ok) {
+                                    return res.json();
+                                }
+                            })
+                            .then((res) => {
+                                const { type, url } = res;
+
+                                if (
+                                    type === 'userAlreadyExists' ||
+                                    type === 'account_not_activated'
+                                ) {
+                                    navigate(url);
+                                } else {
+                                    navigate('/signup?email_sent=true');
+                                }
+                            })
+                            .catch((e) => {
+                                Logger.error(e);
+                            })
+                            .finally(() => {
+                                setShowLoader(false);
+                            });
+                    }
                 }}
             >
                 <Stack
@@ -179,12 +233,6 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
                             }
                         ></TextField>
                     )}
-                    <input
-                        type="hidden"
-                        name="crumb"
-                        id="crumb"
-                        value={csrfToken}
-                    />
                     <Button
                         className="mb-3"
                         variant="contained"

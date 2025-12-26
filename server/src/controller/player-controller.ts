@@ -20,7 +20,7 @@ export class PlayerController implements BaseController {
         const { id = -1 } = req.params;
 
         if (id === -1) {
-            return h.response().code(HttpCode.BAD_REQUEST);
+            return h.response({}).code(HttpCode.BAD_REQUEST);
         }
 
         try {
@@ -31,13 +31,13 @@ export class PlayerController implements BaseController {
             });
 
             if (!data) {
-                return h.response().code(HttpCode.NOT_FOUND);
+                return h.response({}).code(HttpCode.NOT_FOUND);
             }
 
-            return h.response().code(HttpCode.NO_CONTENT);
+            return h.response({}).code(HttpCode.NO_CONTENT);
         } catch (e: any) {
             Logger.error(e);
-            return h.response().code(HttpCode.INTERNAL_SERVER_ERROR);
+            return h.response({}).code(HttpCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

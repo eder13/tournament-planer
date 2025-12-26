@@ -44,12 +44,10 @@ export class AuthController implements BaseController {
                 Logger.error('Failed to sent Mail for Registration.');
             }
 
-            return h
-                .redirect('/signup?email_error_generating=true')
-                .code(HttpCode.INTERNAL_SERVER_ERROR);
+            return h.response({}).code(HttpCode.INTERNAL_SERVER_ERROR);
         }
 
-        return h.redirect('/signup?email_sent=true');
+        return h.response({}).code(HttpCode.OK);
     }
 
     async login(
@@ -166,7 +164,7 @@ export class AuthController implements BaseController {
                 .code(HttpCode.INTERNAL_SERVER_ERROR);
         }
 
-        return h.response().code(HttpCode.OK);
+        return h.response({}).code(HttpCode.OK);
     }
 
     async changePassword(
@@ -262,10 +260,9 @@ export class AuthController implements BaseController {
                     }
                 );
 
-                return h.response().code(HttpCode.OK);
+                return h.response({}).code(HttpCode.OK);
             }
 
-            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -286,7 +283,7 @@ export class AuthController implements BaseController {
                         <div class="container mt-5">
                             <div id="error-password-match" class="alert alert-danger d-none">Paswords Need to match</div>
                             <div id="error-password-length" class="alert alert-danger d-none">Paswords need to be at least 8 characters long</div>
-                            <form id="password-reset-form" method="post" action="/change-password?token=${token}">
+                            <form id="password-reset-form">
                                 <h1 class="mb-5">Set New Password</h1>
                                 <div class="mb-3">
                                     <label class="form-label" for="password">Password: </label>
@@ -414,7 +411,12 @@ export class AuthController implements BaseController {
                 `User ${user.email} already registered and activated - duplicate E-Mail.`
             );
 
-            return h.redirect('/signup?email_already_exists=true');
+            return h
+                .response({
+                    type: 'userAlreadyExists',
+                    url: '/signup?email_already_exists=true',
+                })
+                .code(HttpCode.OK);
         }
 
         if (
@@ -448,9 +450,10 @@ export class AuthController implements BaseController {
             !user.emailVerified &&
             user.verificationTokens?.[0]?.token
         ) {
-            return h.redirect(
-                '/signup?account_not_activated_but_registered=true'
-            );
+            return h.response({
+                type: 'account_not_activated',
+                url: '/signup?account_not_activated_but_registered=true',
+            });
         }
 
         const newRegisteredUser = await Database.getInstance().user.create({
@@ -501,7 +504,6 @@ export class AuthController implements BaseController {
             });
 
         if (!verification) {
-            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -522,7 +524,6 @@ export class AuthController implements BaseController {
         }
 
         if (verification && verification.expiresAt.getTime() < Date.now()) {
-            // TODO: Move this code to React instead of an HTML Template
             return h.response(/*html*/ `
                 <html>
                     <head>
@@ -627,7 +628,6 @@ export class AuthController implements BaseController {
             return this.sendEmail(email, registrationToken, h);
         }
 
-        // TODO: Move this code to React instead of an HTML Template
         return h.response(/*html*/ `
             <html>
                 <head>

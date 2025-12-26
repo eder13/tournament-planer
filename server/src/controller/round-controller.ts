@@ -131,10 +131,10 @@ export class RoundController implements BaseController {
                 nextRoundNumber,
             });
 
-            return h.response().code(HttpCode.CREATED);
+            return h.response({}).code(HttpCode.CREATED);
         } catch (e) {
             Logger.error(e);
-            return h.response().code(HttpCode.INTERNAL_SERVER_ERROR);
+            return h.response({}).code(HttpCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -41,7 +41,7 @@ export function isOwner(check: {
                 Logger.error(
                     `method=${request.method} on ${request.url} is not allowed by user ${request.auth.credentials.email}`
                 );
-                return h.response().code(HttpCode.FORBIDDEN);
+                return h.response({}).code(HttpCode.FORBIDDEN);
             } else {
                 // @ts-ignore
                 return normalChildFunction.apply(this, args);
