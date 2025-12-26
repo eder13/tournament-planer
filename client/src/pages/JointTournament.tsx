@@ -67,6 +67,7 @@ const JointTournament = () => {
 
                         fetch(`/join/tournament/${tournamentId}`, {
                             headers: {
+                                'Content-Type': 'application/json',
                                 'X-CSRF-Token': csrfToken,
                             },
                             method: HTTPMethod.POST,
