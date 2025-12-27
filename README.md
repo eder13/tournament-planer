@@ -23,6 +23,7 @@ GRANT CREATE, DROP, REFERENCES, ALTER ON *.* TO 'tournament'@'localhost';
 2. Create a `.env` file inside `server/` and setup the database as well as other important environment variables, example:
 
 ```txt
+NODE_ENV=production
 PORT="8080"
 PROTOCOL="http"
 HOST="localhost"
@@ -37,8 +38,14 @@ EMAIL_PASSWORD="my-password"
 EMAIL_PORT="587" # 587 or 465
 ```
 
-3. go to `/client` and run `npm i` and `npm run build`
+3. go to `/server` and init the database wih prisma
 
-4. go to `/server` and run `npm i` and `npm run build`
+```txt
+npx prisma migrate deploy
+```
 
-5. start the server in production mode inside `/server` by running `build:serve-prod`
+4. go to `/client` and run `npm i` and `npm run build`
+
+5. go to `/server` and run `npm i` and `npm run build`
+
+6. start the server in production mode inside `/server` by running `build:serve-prod`

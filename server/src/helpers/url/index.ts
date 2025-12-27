@@ -1,7 +1,15 @@
 export class ServerURLUtils {
     static getHostName() {
-        return `${process.env.PROTOCOL}://${process.env.HOST}${
-            process.env.PORT ? ':' + process.env.PORT : ''
-        }`;
+        let portOrNot = '';
+
+        if (process.env.PROTOCOL === 'https') {
+            portOrNot = '';
+        }
+
+        if (process.env.PROTOCOL === 'http' && !!process.env.PORT) {
+            portOrNot = `:${process.env.PORT}`;
+        }
+
+        return `${process.env.PROTOCOL}://${process.env.HOST}${portOrNot}`;
     }
 }
