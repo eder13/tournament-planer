@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../context/global-context/GlobalProvider';
 import './Header.css';
 import useHistoryChangeListener from '../../hooks/useHistoryChangeListener/useHistoryChangeListener';
@@ -11,12 +11,21 @@ import CommonConstants from '../../constants/CommonConstants';
 const Header = () => {
     const { user } = useContext(GlobalContext);
     const inputCheckboxRef = useRef<HTMLInputElement>(null);
+    const [navIsOpen, setNavIsOpen] = useState(false);
 
     const handleChange = useCallback(() => {
         if (inputCheckboxRef.current?.checked) {
             inputCheckboxRef.current.checked = false;
         }
     }, []);
+
+    useEffect(() => {
+        if (navIsOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [navIsOpen]);
 
     useHistoryChangeListener(handleChange);
 
@@ -53,6 +62,9 @@ const Header = () => {
                         type="checkbox"
                         id="toggler"
                         ref={inputCheckboxRef}
+                        onChange={(e) => {
+                            setNavIsOpen(e.currentTarget.checked);
+                        }}
                     />
                     <div className="hamburger">
                         <div style={{ backgroundColor: 'black' }}></div>

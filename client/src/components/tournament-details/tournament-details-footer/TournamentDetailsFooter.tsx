@@ -48,7 +48,10 @@ const TournamentDetailsFooter: FC<Props> = ({
                         <div className="mb-5 pb-5">
                             <h3>Manual Join Link</h3>
                             <a
-                                style={{ pointerEvents: 'none' }}
+                                style={{
+                                    pointerEvents: 'none',
+                                    wordWrap: 'break-word',
+                                }}
                                 href={joinLink}
                             >
                                 {joinLink}

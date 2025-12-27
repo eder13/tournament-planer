@@ -2,7 +2,6 @@ nav {
     /* position: fixed; */
     width: 100dvw;
     background-color: #fff;
-    height: var(--navbar-height-desktop);
     z-index: 5;
     align-items: center;
     -webkit-box-shadow: 0px 1px 10px #999;
@@ -54,20 +53,6 @@ nav .nav-wrapper .logo-name h2 {
     }
 }
 
-@media only screen and (max-width: 1199px) {
-    .menu-wrap-desktop {
-    }
-
-    .language-selector {
-        position: absolute;
-        height: var(--navbar-height-mobile-current);
-        display: grid;
-        place-items: center;
-        padding: 0 0.7rem;
-        transition: height 0.4s;
-    }
-}
-
 .menu-wrap-desktop ul {
     display: flex;
     flex-flow: row;
@@ -83,12 +68,10 @@ nav .nav-wrapper .menu-wrap-mobile ul {
     list-style-type: none;
     display: flex;
     height: 100%;
-    padding-top: var(--navbar-height-desktop);
     margin-top: 0;
     margin-bottom: 0;
     font-size: 18px;
     flex-flow: column;
-    height: 100%;
     justify-content: center;
 }
 
@@ -105,9 +88,6 @@ nav .nav-wrapper .menu-wrap-mobile ul li a {
 
 .logo .logo-img {
     width: auto;
-    height: var(--navbar-height-desktop);
-    object-fit: contain;
-    transition: height 0.4s;
 }
 
 input[id='toggler'][type='checkbox'] {
@@ -117,7 +97,7 @@ input[id='toggler'][type='checkbox'] {
     z-index: 3;
     cursor: pointer;
     width: 50px;
-    height: 100%;
+    height: 50px;
     opacity: 0;
     margin-right: 0;
 }
@@ -128,7 +108,7 @@ input[id='toggler'][type='checkbox'] {
     right: 0;
     z-index: 2;
     width: 50px;
-    height: 100%;
+    height: 50px;
     background-color: white;
     padding: 0.7rem;
     margin-right: 0;
@@ -148,8 +128,6 @@ input[id='toggler'][type='checkbox'] {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-
-    height: 50px;
 }
 
 /* center hamburger line */
@@ -160,7 +138,6 @@ input[id='toggler'][type='checkbox'] {
     flex: none;
     height: 2px;
     width: 100%;
-    background-color: var(--primary-color);
     -webkit-transition: all 0.35s ease-out;
     -o-transition: all 0.35s ease-out;
     transition: all 0.35s ease-out;
@@ -211,10 +188,8 @@ input[id='toggler'][type='checkbox']:checked + .hamburger > div::before {
 
 .menu-wrap-mobile .menu {
     position: fixed;
-    top: var(--navbar-height-desktop-current);
     left: 0;
     width: 100vw;
-    height: calc(100vh - var(--navbar-height-desktop-current));
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -224,13 +199,9 @@ input[id='toggler'][type='checkbox']:checked + .hamburger > div::before {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-
-    /*     transform: scale(0);
-    transition: all ease-in 0.3s; */
 }
 
 .menu-wrap-mobile .menu > div {
-    background: var(--primary-color);
     width: 500vh;
     height: 200vh;
     display: -webkit-box;
@@ -277,20 +248,8 @@ input[id='toggler'][type='checkbox']:checked ~ .menu > div {
 }
 
 @media only screen and (max-width: 1199px) {
-    nav {
-        height: var(--navbar-height-mobile);
-    }
-
     nav .nav-wrapper .menu-wrap-mobile ul {
         padding-top: 0;
-    }
-
-    .logo .logo-img {
-        height: var(--navbar-height-mobile);
-    }
-
-    .menu-wrap-mobile .menu {
-        top: var(--navbar-height-mobile-current);
     }
 }
 
@@ -308,7 +267,7 @@ input[id='toggler'][type='checkbox']:checked ~ .menu > div {
 }
 
 .menu-wrap .menu > div {
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.9);
     width: 500vh;
     height: 200vh;
     display: flex;

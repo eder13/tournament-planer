@@ -1,9 +1,10 @@
-import { useEffect, useState, type FC } from 'react';
+import { useContext, useEffect, useState, type FC } from 'react';
 import type { DataTournamentResultDetails, Player } from '../../types/common';
 import UtilsHelper from '../../utils/UtilsHelper';
 import TournamentDetailsHeader from './tournament-details-header/TournamentDetailsHeader';
 import TournamentDetailsContent from './tournament-details-content/TournamentDetailsContent';
 import TournamentDetailsFooter from './tournament-details-footer/TournamentDetailsFooter';
+import { GlobalContext } from '../../context/global-context/GlobalProvider';
 
 type Props = {
     id: string | undefined;
@@ -39,6 +40,7 @@ const TournamentDetails: FC<Props> = ({ id }) => {
     const [tournament, setTournament] = useState<DataTournamentResultDetails>();
     const [players, setPlayers] = useState<Array<Player>>([]);
     const [timer, setTimer] = useState(INTERVAL_DATA_FETCHING_MS);
+    const { csrfToken } = useContext(GlobalContext);
 
     useEffect(() => {
         if (id) {
@@ -85,6 +87,7 @@ const TournamentDetails: FC<Props> = ({ id }) => {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
                     },
                     body: JSON.stringify({ started: true }),
                 });
@@ -92,6 +95,9 @@ const TournamentDetails: FC<Props> = ({ id }) => {
                     // start the tournament finally
                     fetch(`/tournament/start/${id}`, {
                         method: 'POST',
+                        headers: {
+                            'X-CSRF-Token': csrfToken,
+                        },
                     })
                         .then((res) => {
                             if (res.ok) {

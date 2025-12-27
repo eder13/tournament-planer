@@ -1,4 +1,5 @@
 import {
+    useContext,
     useEffect,
     useState,
     type Dispatch,
@@ -15,6 +16,7 @@ import CustomToolbar from './tournament-table-custom-toolbar/TournamentTableCust
 import { HttpCode, HTTPMethod } from '../../../../server/src/constants/common';
 import UtilsHelper from '../../utils/UtilsHelper';
 import Logger from '../../../../server/src/helpers/logger/index';
+import { GlobalContext } from '../../context/global-context/GlobalProvider';
 
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 500 },
@@ -34,6 +36,7 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
     const navigate = useNavigate();
     const [selectedIds, setSelectedIds] = useState<GridRowSelectionModel>();
     const [rowData, setRowData] = useState(tournaments);
+    const { csrfToken } = useContext(GlobalContext);
 
     useEffect(() => {
         const transformedData = tournaments.map((dataEntry) => {
@@ -58,6 +61,9 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                     const promises = rowData.map(async (data) => {
                         const res = await fetch(`/tournaments/${data.id}`, {
                             method: HTTPMethod.DELETE,
+                            headers: {
+                                'X-CSRF-Token': csrfToken,
+                            },
                         });
 
                         if (res.status === HttpCode.NO_CONTENT) {
@@ -81,6 +87,9 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                     const promises = toDelete.map(async (data) => {
                         const res = await fetch(`/tournaments/${data.id}`, {
                             method: HTTPMethod.DELETE,
+                            headers: {
+                                'X-CSRF-Token': csrfToken,
+                            },
                         });
 
                         if (res.status === HttpCode.NO_CONTENT) {
@@ -111,6 +120,9 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                 const promises = toDelete.map(async (data) => {
                     const res = await fetch(`/tournaments/${data.id}`, {
                         method: HTTPMethod.DELETE,
+                        headers: {
+                            'X-CSRF-Token': csrfToken,
+                        },
                     });
 
                     if (res.status === HttpCode.NO_CONTENT) {
