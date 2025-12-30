@@ -17,6 +17,7 @@ const Header = () => {
         if (inputCheckboxRef.current?.checked) {
             inputCheckboxRef.current.checked = false;
         }
+        setNavIsOpen(false);
     }, []);
 
     useEffect(() => {
