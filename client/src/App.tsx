@@ -36,9 +36,7 @@ const App = () => {
                     email: data.email,
                 },
             });
-        }
-
-        if (data && !isSuccess(data)) {
+        } else if (data && !isSuccess(data)) {
             dispatch({
                 type: 'loggedOut',
             });
@@ -46,7 +44,7 @@ const App = () => {
     }, [data]);
 
     if (isPending && !data) {
-        return <div>Loading initial Data ...</div>;
+        return <>Loading initial Data ...</>;
     }
 
     return (
