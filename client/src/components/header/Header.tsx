@@ -1,5 +1,8 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { GlobalContext } from '../../context/global-context/GlobalProvider';
+import {
+    GlobalContext,
+    LoginStatus,
+} from '../../context/global-context/GlobalProvider';
 import './Header.css';
 import useHistoryChangeListener from '../../hooks/useHistoryChangeListener/useHistoryChangeListener';
 import HeaderLoggedInContent from './header-logged-in-content/HeaderLoggedInContent';
@@ -35,7 +38,7 @@ const Header = () => {
             <div className="nav-wrapper">
                 <Link
                     to={
-                        user.isLoggedIn
+                        user.loginStatus === LoginStatus.LOGGED_IN
                             ? CommonConstants.Routes.UserProfile
                             : CommonConstants.Routes.Home
                     }
@@ -75,7 +78,7 @@ const Header = () => {
                         className="menu loadingHidden"
                     >
                         <div>
-                            {user.isLoggedIn ? (
+                            {user.loginStatus === LoginStatus.LOGGED_IN ? (
                                 <HeaderLoggedInContent />
                             ) : (
                                 <HeaderLoggedOutContent />

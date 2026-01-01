@@ -6,12 +6,17 @@ import {
     type PropsWithChildren,
 } from 'react';
 
+export enum LoginStatus {
+    LOGGED_IN,
+    LOGGED_OUT,
+    LOGGED_UNKNOWN,
+}
+
 interface State {
-    isMounted: boolean;
     user: {
         id: number;
         email: string;
-        isLoggedIn: boolean;
+        loginStatus: LoginStatus;
     };
     csrfToken: string;
 }
@@ -28,19 +33,15 @@ type Action =
           type: 'loggedOut';
       }
     | {
-          type: 'mounted';
-      }
-    | {
           type: 'setCsrf';
           data: string;
       };
 
 const initialContextState: State = {
-    isMounted: false,
     user: {
         id: -1,
         email: '',
-        isLoggedIn: false,
+        loginStatus: LoginStatus.LOGGED_UNKNOWN,
     },
     csrfToken: '',
 };
@@ -56,7 +57,7 @@ function globalReducer(state: State, action: Action) {
                 user: {
                     id: action.data.id,
                     email: action.data.email,
-                    isLoggedIn: true,
+                    loginStatus: LoginStatus.LOGGED_IN,
                 },
             };
         }
@@ -66,14 +67,8 @@ function globalReducer(state: State, action: Action) {
                 user: {
                     id: -1,
                     email: '',
-                    isLoggedIn: false,
+                    loginStatus: LoginStatus.LOGGED_OUT,
                 },
-            };
-        }
-        case 'mounted': {
-            return {
-                ...state,
-                isMounted: true,
             };
         }
         case 'setCsrf': {

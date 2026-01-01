@@ -3,7 +3,10 @@ import Page from '../structure/page/Page';
 import { Button } from '@mui/material';
 import CommonConstants from '../constants/CommonConstants';
 import { useContext } from 'react';
-import { GlobalContext } from '../context/global-context/GlobalProvider';
+import {
+    GlobalContext,
+    LoginStatus,
+} from '../context/global-context/GlobalProvider';
 import TextImageComponent from '../components/text-image-component/TextImageComponent';
 import OverviewDashboardImage from './../assets/overview_dashboard.png';
 import TournamentGeneratorGifImage from './../assets/tournament_generator.gif';
@@ -12,7 +15,7 @@ import QRCodeDashboardJoinImage from './../assets/qr.png';
 const Home = () => {
     const { user } = useContext(GlobalContext);
 
-    if (user.isLoggedIn) {
+    if (user.loginStatus === LoginStatus.LOGGED_IN) {
         return <Navigate to={CommonConstants.Routes.UserProfile} />;
     }
 

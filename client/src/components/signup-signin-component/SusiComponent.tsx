@@ -17,8 +17,6 @@ type Props = {
     isSignUp?: boolean;
 };
 
-const MIN_PASSWORD_LENGTH = 8;
-
 const SusiComponent: FC<Props> = ({ isSignUp }) => {
     const { csrfToken } = useContext(GlobalContext);
     const [email, setEmail] = useState('');
@@ -31,14 +29,15 @@ const SusiComponent: FC<Props> = ({ isSignUp }) => {
     const emailError =
         email.length > 0 && !CommonConstants.RegExEmail.test(email);
     const passwordError =
-        password.length !== 0 && password.length < MIN_PASSWORD_LENGTH;
+        password.length !== 0 &&
+        password.length < CommonConstants.MIN_PASSWORD_LENGTH;
     const confirmPasswordError = password !== confirmPassword;
 
     const isFormValid =
         CommonConstants.RegExEmail.test(email) &&
-        password.length >= MIN_PASSWORD_LENGTH &&
+        password.length >= CommonConstants.MIN_PASSWORD_LENGTH &&
         (isSignUp
-            ? confirmPassword.length >= MIN_PASSWORD_LENGTH &&
+            ? confirmPassword.length >= CommonConstants.MIN_PASSWORD_LENGTH &&
               confirmPassword === password
             : true);
 

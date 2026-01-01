@@ -124,45 +124,6 @@ const KnockoutTournamentPlan: FC<Props> = ({ data }) => {
                             </ul>
                         );
                     })}
-                    {/*                 <ul className="round round-2">
-                    <li className="spacer">&nbsp;</li>
-
-                    <li className="game game-top winner">
-                        Lousville <span>82</span>
-                    </li>
-                    <li
-                        style={{
-                            height: `${2 * 40}px`,
-                            display: 'grid',
-                        }}
-                        className="game game-spacer"
-                    >
-                        <Button>Enter Result</Button>
-                    </li>
-                    <li className="game game-bottom">
-                        Colo St <span>56</span>
-                    </li>
-
-                    <li className="spacer">&nbsp;</li>
-
-                    <li className="game game-top winner">
-                        Oregon <span>74</span>
-                    </li>
-                    <li
-                        style={{
-                            height: `${2 * 40}px`,
-                            display: 'grid',
-                        }}
-                        className="game game-spacer"
-                    >
-                        <Button>Enter Result</Button>
-                    </li>
-                    <li className="game game-bottom">
-                        Saint Louis <span>57</span>
-                    </li>
-
-                    <li className="spacer">&nbsp;</li>
-                </ul> */}
                 </div>
             </Typography>
             {winner && (

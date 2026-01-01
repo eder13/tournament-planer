@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
-import { GlobalContext } from './context/global-context/GlobalProvider';
-import { useContext } from 'react';
-import { useInitialProfileData } from './hooks/useInitialProfileData/useInitialProfileData';
+import {
+    isSuccess,
+    useInitialProfileData,
+} from './hooks/useInitialProfileData/useInitialProfileData';
 import Home from './pages/Home';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
@@ -18,14 +19,34 @@ import Error404 from './pages/Error404';
 import ActivationAccount from './pages/ActivationAccount';
 import PrivateRoute from './structure/private-route/PrivateRoute';
 import { useSetCSRFToken } from './hooks/useSetCSRFToken/useSetCSRFToken';
+import { useContext, useEffect } from 'react';
+import { GlobalContextDispatch } from './context/global-context/GlobalProvider';
 
 const App = () => {
-    useInitialProfileData();
+    const dispatch = useContext(GlobalContextDispatch);
+    const { isPending, data } = useInitialProfileData();
     useSetCSRFToken();
-    const { isMounted } = useContext(GlobalContext);
 
-    if (!isMounted) {
-        return null;
+    useEffect(() => {
+        if (data && isSuccess(data)) {
+            dispatch({
+                type: 'loggedIn',
+                data: {
+                    id: Number(data.id),
+                    email: data.email,
+                },
+            });
+        }
+
+        if (data && !isSuccess(data)) {
+            dispatch({
+                type: 'loggedOut',
+            });
+        }
+    }, [data]);
+
+    if (isPending && !data) {
+        return <div>Loading initial Data ...</div>;
     }
 
     return (
