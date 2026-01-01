@@ -1,5 +1,5 @@
 import Page from '../structure/page/Page';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { GlobalContext } from '../context/global-context/GlobalProvider';
 import ModalAddTournament from '../components/modal-add-new-tournament/ModalAddTournament';
 import { Alert } from '@mui/material';
@@ -7,19 +7,31 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSearchParams } from 'react-router';
 import TournamentsTable from '../components/tournaments-table/TournamentsTable';
 import type { DataTournamentsResult } from '../types/common';
+import { useQuery } from '@tanstack/react-query';
+import { QueryConstants } from '../constants/QueryConstants';
 
 const UserProfile = () => {
     const { user } = useContext(GlobalContext);
-    const [tournaments, setTournaments] = useState<
-        Array<DataTournamentsResult>
-    >([]);
     const [params] = useSearchParams();
 
-    useEffect(() => {
-        fetch('/tournaments')
-            .then((res) => res.json())
-            .then((data) => setTournaments(data));
-    }, []);
+    const {
+        isPending,
+        data: tournaments,
+        isError,
+    } = useQuery<Array<DataTournamentsResult>>({
+        queryKey: [QueryConstants.DASHBOARD_TOURNAMENTS_DATA],
+        queryFn: () => {
+            return fetch('/tournaments').then((res) => res.json());
+        },
+    });
+
+    if (isPending) {
+        return <div>Loading Tournaments Data...</div>;
+    }
+
+    if (!tournaments || isError) {
+        return <div>Error Loading Tournaments Data</div>;
+    }
 
     return (
         <Page>
@@ -51,10 +63,7 @@ const UserProfile = () => {
                 <ModalAddTournament />
             </div>
             <div>
-                <TournamentsTable
-                    tournaments={tournaments}
-                    setTournaments={setTournaments}
-                />
+                <TournamentsTable tournaments={tournaments} />
             </div>
         </Page>
     );

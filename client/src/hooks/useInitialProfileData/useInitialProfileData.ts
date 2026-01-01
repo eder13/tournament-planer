@@ -20,7 +20,7 @@ export function isSuccess(
 
 export const useInitialProfileData = () => {
     const { isPending, data, error } = useQuery<InitialFetchResult>({
-        queryKey: [QueryConstants.INITIAL_PROFILE_DATE],
+        queryKey: [QueryConstants.INITIAL_PROFILE_DATA],
         queryFn: () => {
             return fetch('/profile').then((res) => {
                 return res.json();

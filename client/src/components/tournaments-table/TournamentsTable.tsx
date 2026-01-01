@@ -21,7 +21,12 @@ import { GlobalContext } from '../../context/global-context/GlobalProvider';
 const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 500 },
     { field: 'name', headerName: 'Tournament Name', width: 360 },
-    { field: 'created_on', headerName: 'Created', width: 200 },
+    {
+        field: 'created_on',
+        headerName: 'Created',
+        width: 200,
+        valueFormatter: (params) => UtilsHelper.parseDate(params as Date),
+    },
     { field: 'started', headerName: 'active', width: 100 },
 ];
 
@@ -29,7 +34,9 @@ const paginationModel = { page: 0, pageSize: 5 };
 
 type Props = {
     tournaments: Array<DataTournamentsResult>;
-    setTournaments: Dispatch<SetStateAction<DataTournamentsResult[]>>;
+    setTournaments?: Dispatch<
+        SetStateAction<DataTournamentsResult[] | undefined>
+    >;
 };
 
 const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
@@ -43,7 +50,7 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
             return {
                 id: dataEntry.id,
                 name: dataEntry.name,
-                created_on: UtilsHelper.parseDate(dataEntry.created_on),
+                created_on: dataEntry.created_on,
                 created_by: dataEntry.created_by,
                 started: dataEntry.started ? 'ongoing' : 'pending',
             };
@@ -77,7 +84,7 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
 
                     // reset row data to empty array since we deleted everything
                     setRowData([]);
-                    setTournaments([]);
+                    setTournaments?.([]);
                 } else {
                     // delete only the ones that have NOT been excluded
                     const toDelete = rowData.filter(
@@ -109,7 +116,7 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                     );
 
                     setRowData(filtered);
-                    setTournaments(filtered);
+                    setTournaments?.(filtered);
                 }
             } else if (selectedIds.type === 'include') {
                 // delete only the ones that HAVE BEEN included
@@ -142,7 +149,7 @@ const TournamentsTable: FC<Props> = ({ tournaments, setTournaments }) => {
                 );
 
                 setRowData(filtered);
-                setTournaments(filtered);
+                setTournaments?.(filtered);
             }
         }
     };

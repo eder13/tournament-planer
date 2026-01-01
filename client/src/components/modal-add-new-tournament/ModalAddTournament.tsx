@@ -1,4 +1,5 @@
 import {
+    Alert,
     Box,
     Button,
     Modal,
@@ -6,10 +7,8 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useContext, useState } from 'react';
-import { GlobalContext } from '../../context/global-context/GlobalProvider';
-import { HTTPMethod } from '../../../../server/src/constants/common';
-import Logger from '../../../../server/src/helpers/logger';
+import { useState } from 'react';
+import { usePostCreateTournament } from '../../hooks/usePostCreateTournament/usePostCreateTournament';
 
 const style = {
     position: 'absolute',
@@ -24,9 +23,9 @@ const style = {
 };
 
 const ModalAddTournament = () => {
-    const { csrfToken } = useContext(GlobalContext);
     const [open, setOpen] = useState(false);
     const [text, setText] = useState('');
+    const { mutate, isError, isSuccess, isPending } = usePostCreateTournament();
 
     const isErrorText = text.length < 2;
     const isFormValid = text.length >= 2;
@@ -48,6 +47,25 @@ const ModalAddTournament = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
+                    {/* TODO: Style properly */}
+                    {isSuccess && (
+                        <Alert
+                            className="mb-3"
+                            severity="success"
+                        >
+                            Successfully Created your Tournament "{text}""
+                        </Alert>
+                    )}
+
+                    {isError && (
+                        <Alert
+                            className="mb-3"
+                            severity="error"
+                        >
+                            Could not create Tournament "{text}""
+                        </Alert>
+                    )}
+
                     <Typography
                         id="modal-modal-title"
                         variant="h6"
@@ -56,67 +74,50 @@ const ModalAddTournament = () => {
                     >
                         Create a new Tournament
                     </Typography>
-                    <form
-                        style={{
-                            minWidth: '300px',
-                        }}
-                        onSubmit={(e) => {
-                            e.preventDefault();
+                    {!isPending ? (
+                        <form
+                            style={{
+                                minWidth: '300px',
+                            }}
+                            onSubmit={(e) => {
+                                e.preventDefault();
 
-                            if (isFormValid) {
-                                fetch('/tournament', {
-                                    method: HTTPMethod.POST,
-                                    headers: {
-                                        'X-CSRF-Token': csrfToken,
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        name: text,
-                                    }),
-                                })
-                                    .then((res) => {
-                                        if (res.ok) {
-                                            window.location.href =
-                                                '/userprofile?created=true';
-                                        }
-                                        throw new Error(
-                                            'Failed to Create Tournament'
-                                        );
-                                    })
-                                    .catch((e) => {
-                                        Logger.error(e);
-                                    });
-                            }
-                        }}
-                    >
-                        <Stack
-                            sx={{ maxWidth: '500px' }}
-                            spacing={2}
-                        >
-                            <TextField
-                                placeholder="My awesome Tournament"
-                                id="name"
-                                name="name"
-                                label="Name of Tournament"
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                                error={isErrorText}
-                                helperText={
-                                    isErrorText
-                                        ? 'Specify a name with at least 2 characters'
-                                        : ''
+                                if (isFormValid) {
+                                    mutate(text);
                                 }
-                            ></TextField>
-                            <Button
-                                className="mb-3"
-                                variant="contained"
-                                type="submit"
-                                disabled={!isFormValid}
+                            }}
+                        >
+                            <Stack
+                                sx={{ maxWidth: '500px' }}
+                                spacing={2}
                             >
-                                Create
-                            </Button>
-                        </Stack>
-                    </form>
+                                <TextField
+                                    placeholder="My awesome Tournament"
+                                    id="name"
+                                    name="name"
+                                    label="Name of Tournament"
+                                    value={text}
+                                    onChange={(e) => setText(e.target.value)}
+                                    error={isErrorText}
+                                    helperText={
+                                        isErrorText
+                                            ? 'Specify a name with at least 2 characters'
+                                            : ''
+                                    }
+                                ></TextField>
+                                <Button
+                                    className="mb-3"
+                                    variant="contained"
+                                    type="submit"
+                                    disabled={!isFormValid}
+                                >
+                                    Create
+                                </Button>
+                            </Stack>
+                        </form>
+                    ) : (
+                        <div>Loading...</div>
+                    )}
                 </Box>
             </Modal>
         </>
