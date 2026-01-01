@@ -2,6 +2,7 @@ import {
     Alert,
     Box,
     Button,
+    CircularProgress,
     Modal,
     Stack,
     TextField,
@@ -9,6 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { usePostCreateTournament } from '../../hooks/usePostCreateTournament/usePostCreateTournament';
+import { useTimedMessageDisplay } from '../../hooks/useTimedMessageDisplay/useTimedMessageDisplay';
 
 const style = {
     position: 'absolute',
@@ -26,9 +28,11 @@ const ModalAddTournament = () => {
     const [open, setOpen] = useState(false);
     const [text, setText] = useState('');
     const { mutate, isError, isSuccess, isPending } = usePostCreateTournament();
+    const showSuccessBox = useTimedMessageDisplay(isSuccess);
+    const showErrorBox = useTimedMessageDisplay(isError);
 
-    const isErrorText = text.length < 2;
-    const isFormValid = text.length >= 2;
+    const isErrorText = !!text.length && text.length < 4;
+    const isFormValid = text.length >= 4;
 
     return (
         <>
@@ -47,22 +51,21 @@ const ModalAddTournament = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    {/* TODO: Style properly */}
-                    {isSuccess && (
+                    {showSuccessBox && (
                         <Alert
                             className="mb-3"
                             severity="success"
                         >
-                            Successfully Created your Tournament "{text}""
+                            Successfully Created your Tournament
                         </Alert>
                     )}
 
-                    {isError && (
+                    {showErrorBox && (
                         <Alert
                             className="mb-3"
                             severity="error"
                         >
-                            Could not create Tournament "{text}""
+                            Could not create Tournament
                         </Alert>
                     )}
 
@@ -83,7 +86,9 @@ const ModalAddTournament = () => {
                                 e.preventDefault();
 
                                 if (isFormValid) {
-                                    mutate(text);
+                                    mutate(text, {
+                                        onSuccess: () => setText(''),
+                                    });
                                 }
                             }}
                         >
@@ -101,7 +106,7 @@ const ModalAddTournament = () => {
                                     error={isErrorText}
                                     helperText={
                                         isErrorText
-                                            ? 'Specify a name with at least 2 characters'
+                                            ? 'Specify a name with at least 4 characters'
                                             : ''
                                     }
                                 ></TextField>
@@ -116,7 +121,9 @@ const ModalAddTournament = () => {
                             </Stack>
                         </form>
                     ) : (
-                        <div>Loading...</div>
+                        <div>
+                            <CircularProgress />
+                        </div>
                     )}
                 </Box>
             </Modal>

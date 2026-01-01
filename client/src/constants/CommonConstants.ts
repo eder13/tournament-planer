@@ -15,4 +15,5 @@ export default {
 
     RegExEmail: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     MIN_PASSWORD_LENGTH: 8,
+    SUCCESS_ERROR_MSG_DISPLAY_DURATION_MS: 5000,
 };

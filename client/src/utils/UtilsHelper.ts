@@ -27,6 +27,13 @@ class UtilsHelper {
             .find((row) => row.startsWith(name + '='))
             ?.split('=')[1];
     }
+
+    static timeout = (ms: number) =>
+        new Promise<void>((res) => {
+            setTimeout(() => {
+                res();
+            }, ms);
+        });
 }
 
 export default UtilsHelper;

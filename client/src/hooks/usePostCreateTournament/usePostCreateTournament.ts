@@ -20,6 +20,12 @@ export const usePostCreateTournament = () => {
                 body: JSON.stringify({
                     name: text,
                 }),
+            }).then((res) => {
+                if (!res.ok) {
+                    throw new Error('Error creating tournament');
+                }
+
+                return res.json();
             });
         },
         onSuccess: () => {
