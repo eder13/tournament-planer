@@ -3,14 +3,16 @@ import type { DataTournamentRoundAndMatchesResult } from '../../types/common';
 import './KnockoutTournamentPlan.css';
 import { SeparatorPlayerUUIDDatabaes } from '../../../../server/src/constants/common';
 import UtilsHelper from '../../utils/UtilsHelper';
-import { Button, Typography } from '@mui/material';
+import { Alert, Button, CircularProgress, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 
 type Props = {
     data: DataTournamentRoundAndMatchesResult | undefined;
+    isPending: boolean;
+    isError?: boolean;
 };
 
-const KnockoutTournamentPlan: FC<Props> = ({ data }) => {
+const KnockoutTournamentPlan: FC<Props> = ({ data, isPending, isError }) => {
     const navigate = useNavigate();
     let winner: string | undefined = undefined;
 
@@ -26,6 +28,18 @@ const KnockoutTournamentPlan: FC<Props> = ({ data }) => {
         winner = data.tournamentWithRounds.rounds[
             data.tournamentWithRounds.rounds.length - 1
         ].matches[0].winner?.name.split(SeparatorPlayerUUIDDatabaes)[0];
+    }
+
+    if (isPending) {
+        return <CircularProgress />;
+    }
+
+    if (isError) {
+        return (
+            <Alert severity="error">
+                There was an Error retrieving the Knockout Tournament Table
+            </Alert>
+        );
     }
 
     return (
