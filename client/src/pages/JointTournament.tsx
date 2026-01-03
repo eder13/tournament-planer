@@ -7,43 +7,40 @@ import {
 } from '@mui/material';
 import Page from '../structure/page/Page';
 import { useParams } from 'react-router';
-import { useContext, useState } from 'react';
-import { GlobalContext } from '../context/global-context/GlobalProvider';
-import { HTTPMethod } from '../../../server/src/constants/common';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { usePostJoinTournament } from '../hooks/usePostJoinTournament/usePostJoinTournament';
+import { useTimedMessageDisplay } from '../hooks/useTimedMessageDisplay/useTimedMessageDisplay';
 
 const JointTournament = () => {
-    const { csrfToken } = useContext(GlobalContext);
-    const [successMsg, setSuccessMsg] = useState(false);
-    const [errorMsg, setErrorMsg] = useState(false);
-    const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
+    const { mutate, isSuccess, isError, isPending, data } =
+        usePostJoinTournament();
 
     const { tournamentId = '' } = useParams<{ tournamentId: string }>();
     const [name, setName] = useState('');
+    const showSuccessBox = useTimedMessageDisplay(isSuccess, 15000);
+    const showErrorBox = useTimedMessageDisplay(isError);
 
-    const isFormValid = name.length >= 2;
-    const isError = name.length < 2;
+    const isFormValid = name.length >= 4;
+    const isErrorForm = name.length !== 0 && name.length < 4;
 
     return (
         <Page>
             <h1 className="mb-5">Enter your Name to Join the Competition!</h1>
 
-            {showLoadingSpinner && <CircularProgress className="mb-3" />}
+            {isPending && <CircularProgress className="mb-3" />}
 
-            {successMsg && (
+            {showSuccessBox && data && (
                 <Alert
                     className="mb-3"
                     severity="success"
                 >
                     <FontAwesomeIcon icon="check" />
-                    <span>
-                        You have entered the tournament successfully! 🎉 Your
-                        name will be visible in the dashboard shortly.
-                    </span>
+                    <span>{data.message}</span>
                 </Alert>
             )}
 
-            {errorMsg && (
+            {showErrorBox && (
                 <Alert
                     className="mb-3"
                     severity="error"
@@ -61,31 +58,14 @@ const JointTournament = () => {
                     e.preventDefault();
 
                     if (isFormValid) {
-                        setSuccessMsg(false);
-                        setErrorMsg(false);
-                        setShowLoadingSpinner(true);
-
-                        fetch(`/join/tournament/${tournamentId}`, {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-Token': csrfToken,
-                            },
-                            method: HTTPMethod.POST,
-                            body: JSON.stringify({
-                                name,
-                            }),
-                        })
-                            .then((res) => {
-                                if (res.ok) {
-                                    setSuccessMsg(true);
-                                }
-                            })
-                            .catch(() => {
-                                setErrorMsg(true);
-                            })
-                            .finally(() => {
-                                setShowLoadingSpinner(false);
-                            });
+                        mutate(
+                            { tournamentId, name },
+                            {
+                                onSuccess: () => {
+                                    setName('');
+                                },
+                            }
+                        );
                     }
                 }}
                 style={{
@@ -103,10 +83,10 @@ const JointTournament = () => {
                         label="Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        error={isError}
+                        error={isErrorForm}
                         helperText={
-                            isError
-                                ? 'Specify your Name with at least 2 characters'
+                            isErrorForm
+                                ? 'Specify your Name with at least 4 characters'
                                 : ''
                         }
                     ></TextField>
@@ -114,6 +94,7 @@ const JointTournament = () => {
                         className="mb-3"
                         variant="contained"
                         type="submit"
+                        disabled={!isFormValid || isPending || !name.length}
                     >
                         Enter Tournament
                     </Button>

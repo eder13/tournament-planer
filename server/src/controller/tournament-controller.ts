@@ -1,18 +1,12 @@
 import { Request, ResponseToolkit } from '@hapi/hapi';
 import { Controller } from '../decorators/Controller';
 import { BaseController } from '../types/core';
-import {
-    HttpCode,
-    HTTPMethod,
-    SeparatorPlayerUUIDDatabaes,
-} from '../constants/common';
+import { HttpCode, SeparatorPlayerUUIDDatabaes } from '../constants/common';
 import Database from '../db/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import Logger from '../helpers/logger';
 import type { DataTournamentResultDetails } from '../../../client/src/types/common';
 import { Prisma } from '@prisma/client';
-import TournamentHelper from '../helpers/tournament';
-import { ServerURLUtils } from '../helpers/url';
 import { TournamentService } from '../services/tournament-service/tournament-service';
 
 @Controller()
@@ -38,8 +32,6 @@ export class TournamentController implements BaseController {
         h: ResponseToolkit
     ) {
         const { name } = request.payload;
-
-        console.log('#####** request.payload', request.payload);
 
         if (!name) {
             return h.response({}).code(HttpCode.BAD_REQUEST);
@@ -139,45 +131,19 @@ export class TournamentController implements BaseController {
         });
 
         if (tournament?.started) {
-            return h.response(/*html*/ `
-                <html>
-                    <head>
-                        <meta
-                            name="viewport"
-                            content="width=device-width, initial-scale=1.0"
-                        />
-                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-                    </head>
-                    <body>
-                        <div class="container mt-5">
-                            <div class="alert alert-danger" role="alert">
-                                The tournament did already start, you can no longer join or participate.
-                            </div>
-                            <button onclick="window.history.back();" class="btn btn-primary">Back</button>
-                        </div>
-                    </body>
-                </html>`);
+            return h
+                .response({
+                    error: 'The tournament did already start, you can no longer join or participate.',
+                })
+                .code(HttpCode.BAD_REQUEST);
         }
 
         if (!name || !id || tournament?.started) {
-            return h.response(/*html*/ `
-                <html>
-                    <head>
-                        <meta
-                            name="viewport"
-                            content="width=device-width, initial-scale=1.0"
-                        />
-                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-                    </head>
-                    <body>
-                        <div class="container mt-5">
-                            <div class="alert alert-danger" role="alert">
-                                You did not specify a name or the name is already registered. Please try again by scanning the QR Code or entering the join URL in the browser.
-                            </div>
-                            <button onclick="window.history.back();" class="btn btn-primary">Back</button>
-                        </div>
-                    </body>
-                </html>`);
+            return h
+                .response({
+                    error: 'You did not specify a name or the name is already registered. Please try again by scanning the QR Code or entering the join URL in the browser.',
+                })
+                .code(HttpCode.BAD_REQUEST);
         }
 
         const nameToSaveInDatabase =
@@ -199,25 +165,12 @@ export class TournamentController implements BaseController {
             },
         });
 
-        return h.response(/*html*/ `
-            <html>
-                <head>
-                    <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1.0"
-                    />
-                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-                </head>
-                <body>
-                    <div class="container mt-5">
-                        <div class="alert alert-success" role="alert">
-                            You have been added to the Tournament! Your name will be displayed in the Admin Panel shortly!
-                            <br>
-                            You can close this window now.
-                        </div>
-                    </div>
-                </body>
-            </html>`);
+        return h
+            .response({
+                message:
+                    'You have been added to the Tournament! Your name will be displayed in the Admin Panel shortly! You can close this window now.',
+            })
+            .code(HttpCode.CREATED);
     }
 
     public async patchTournamentById(

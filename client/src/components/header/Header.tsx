@@ -8,7 +8,7 @@ import useHistoryChangeListener from '../../hooks/useHistoryChangeListener/useHi
 import HeaderLoggedInContent from './header-logged-in-content/HeaderLoggedInContent';
 import HeaderLoggedOutContent from './header-logged-out-content/HeaderLoggedOutContent';
 import Logo from '../../assets/logo.png';
-import { Link } from 'react-router';
+import { Link, type Location } from 'react-router';
 import CommonConstants from '../../constants/CommonConstants';
 
 const Header = () => {
@@ -16,7 +16,9 @@ const Header = () => {
     const inputCheckboxRef = useRef<HTMLInputElement>(null);
     const [navIsOpen, setNavIsOpen] = useState(false);
 
-    const handleChange = useCallback(() => {
+    const handleChange = useCallback((location: Location) => {
+        console.log('Location changed to:', location.pathname);
+
         if (inputCheckboxRef.current?.checked) {
             inputCheckboxRef.current.checked = false;
         }
