@@ -9,7 +9,7 @@ import Page from '../structure/page/Page';
 import { useParams } from 'react-router';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { usePostJoinTournament } from '../hooks/usePostJoinTournament/usePostJoinTournament';
+import { usePostJoinTournament } from '../hooks/data-fetching/usePostJoinTournament/usePostJoinTournament';
 import { useTimedMessageDisplay } from '../hooks/useTimedMessageDisplay/useTimedMessageDisplay';
 
 const JointTournament = () => {

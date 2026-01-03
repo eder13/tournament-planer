@@ -6,7 +6,7 @@ import { Alert, Button, CircularProgress } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSearchParams } from 'react-router';
 import TournamentsTable from '../components/tournaments-table/TournamentsTable';
-import { useGetTournaments } from '../hooks/useGetTournaments/useGetTournaments';
+import { useGetTournaments } from '../hooks/data-fetching/useGetTournaments/useGetTournaments';
 
 const UserProfile = () => {
     const { user } = useContext(GlobalContext);

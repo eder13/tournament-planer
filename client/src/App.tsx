@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import {
     isSuccess,
     useInitialProfileData,
-} from './hooks/useInitialProfileData/useInitialProfileData';
+} from './hooks/data-fetching/useInitialProfileData/useInitialProfileData';
 import Home from './pages/Home';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';

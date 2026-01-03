@@ -5,4 +5,5 @@ export const QueryConstants = {
     ROUNDS_MATCHES_BY_TOURNAMENT_ID: 'roundsMatchesByTournamentId',
     DELETE_PLAYER_FROM_TOURNAMENT: 'deletePlayerFromTournament',
     JOIN_TOURNAMENT_BY_TOURNAMENT_ID: 'joinTournamentByTournamentId',
+    SET_MATCH_RESULT_FOR_ROUND: 'setMatchResultForRound',
 };

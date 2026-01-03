@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { QueryConstants } from '../../constants/QueryConstants';
+import { QueryConstants } from '../../../constants/QueryConstants';
 
 type InitialFetchResultSuccess = {
     id: string;

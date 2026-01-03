@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { useContext } from 'react';
-import { HTTPMethod } from '../../../../server/src/constants/common';
-import { GlobalContext } from '../../context/global-context/GlobalProvider';
-import { QueryConstants } from '../../constants/QueryConstants';
+import { HTTPMethod } from '../../../../../server/src/constants/common';
+import { GlobalContext } from '../../../context/global-context/GlobalProvider';
+import { QueryConstants } from '../../../constants/QueryConstants';
 
 export const usePostJoinTournament = () => {
     const { csrfToken } = useContext(GlobalContext);

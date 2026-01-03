@@ -9,7 +9,7 @@ import {
     Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { usePostCreateTournament } from '../../hooks/usePostCreateTournament/usePostCreateTournament';
+import { usePostCreateTournament } from '../../hooks/data-fetching/usePostCreateTournament/usePostCreateTournament';
 import { useTimedMessageDisplay } from '../../hooks/useTimedMessageDisplay/useTimedMessageDisplay';
 
 const style = {

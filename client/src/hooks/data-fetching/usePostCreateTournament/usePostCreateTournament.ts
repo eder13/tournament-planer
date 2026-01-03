@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { HTTPMethod } from '../../../../server/src/constants/common';
-import { QueryConstants } from '../../constants/QueryConstants';
+import { HTTPMethod } from '../../../../../server/src/constants/common';
+import { QueryConstants } from '../../../constants/QueryConstants';
 import { useContext } from 'react';
-import { GlobalContext } from '../../context/global-context/GlobalProvider';
+import { GlobalContext } from '../../../context/global-context/GlobalProvider';
 
 export const usePostCreateTournament = () => {
     const queryClient = useQueryClient();

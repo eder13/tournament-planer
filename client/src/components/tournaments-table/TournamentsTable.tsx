@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 import './TournamentsTable.css';
 import CustomToolbar from './tournament-table-custom-toolbar/TournamentTableCustomToolbar';
 import UtilsHelper from '../../utils/UtilsHelper';
-import { useDeleteTournament } from '../../hooks/useDeleteTournament/useDeleteTournament';
+import { useDeleteTournament } from '../../hooks/data-fetching/useDeleteTournament/useDeleteTournament';
 import { useTimedMessageDisplay } from '../../hooks/useTimedMessageDisplay/useTimedMessageDisplay';
 import { Alert, CircularProgress } from '@mui/material';
 

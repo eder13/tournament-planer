@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { QueryConstants } from '../../constants/QueryConstants';
-import type { DataTournamentsResult } from '../../types/common';
+import { QueryConstants } from '../../../constants/QueryConstants';
+import type { DataTournamentsResult } from '../../../types/common';
 
 export const useGetTournaments = () => {
     const {

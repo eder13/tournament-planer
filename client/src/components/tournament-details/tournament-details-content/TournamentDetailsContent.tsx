@@ -16,8 +16,8 @@ import { type FC } from 'react';
 import type { Player } from '../../../types/common';
 import KnockoutTournamentPlan from '../../knockout-tournament-plan/KnockoutTournamentPlan';
 import { useTimedMessageDisplay } from '../../../hooks/useTimedMessageDisplay/useTimedMessageDisplay';
-import { useGetRoundsMatchesOfTournament } from '../../../hooks/useGetRoundsMatchesOfTournament/useGetRoundsMatchesOfTournament';
-import { useDeletePlayerOfTournament } from '../../../hooks/useDeletePlayerOfTournament/useDeletePlayerOfTournament';
+import { useGetRoundsMatchesOfTournament } from '../../../hooks/data-fetching/useGetRoundsMatchesOfTournament/useGetRoundsMatchesOfTournament';
+import { useDeletePlayerOfTournament } from '../../../hooks/data-fetching/useDeletePlayerOfTournament/useDeletePlayerOfTournament';
 
 type Props = {
     started: boolean;

@@ -3,9 +3,9 @@ import UtilsHelper from '../../utils/UtilsHelper';
 import TournamentDetailsHeader from './tournament-details-header/TournamentDetailsHeader';
 import TournamentDetailsContent from './tournament-details-content/TournamentDetailsContent';
 import TournamentDetailsFooter from './tournament-details-footer/TournamentDetailsFooter';
-import { useGetPlayersForTournament } from '../../hooks/useGetPlayersForTournament/useGetPlayersForTournament';
+import { useGetPlayersForTournament } from '../../hooks/data-fetching/useGetPlayersForTournament/useGetPlayersForTournament';
 import { Alert, CircularProgress } from '@mui/material';
-import { usePatchStartTournament } from '../../hooks/usePatchStartTournament/usePatchStartTournament';
+import { usePatchStartTournament } from '../../hooks/data-fetching/usePatchStartTournament/usePatchStartTournament';
 
 type Props = {
     id: string | undefined;

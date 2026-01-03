@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { QueryConstants } from '../../constants/QueryConstants';
-import type { DataTournamentResultDetails, Player } from '../../types/common';
+import { QueryConstants } from '../../../constants/QueryConstants';
+import type {
+    DataTournamentResultDetails,
+    Player,
+} from '../../../types/common';
 
 type PlayersForTournamentDataResult = {
     tournament: DataTournamentResultDetails;

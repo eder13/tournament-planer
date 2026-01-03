@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { QueryConstants } from '../../constants/QueryConstants';
+import { QueryConstants } from '../../../constants/QueryConstants';
 import { useContext } from 'react';
-import { GlobalContext } from '../../context/global-context/GlobalProvider';
+import { GlobalContext } from '../../../context/global-context/GlobalProvider';
 
 export const usePatchStartTournament = (tournamentId: string | undefined) => {
     const { csrfToken } = useContext(GlobalContext);
