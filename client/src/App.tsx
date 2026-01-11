@@ -21,6 +21,7 @@ import PrivateRoute from './structure/private-route/PrivateRoute';
 import { useSetCSRFToken } from './hooks/useSetCSRFToken/useSetCSRFToken';
 import { useContext, useEffect } from 'react';
 import { GlobalContextDispatch } from './context/global-context/GlobalProvider';
+import { CircularProgress } from '@mui/material';
 
 const App = () => {
     const dispatch = useContext(GlobalContextDispatch);
@@ -44,7 +45,11 @@ const App = () => {
     }, [data]);
 
     if (isPending && !data) {
-        return <>Loading initial Data ...</>;
+        return (
+            <div className="d-flex justify-content-center align-items-center min-vh-100">
+                <CircularProgress />
+            </div>
+        );
     }
 
     return (
